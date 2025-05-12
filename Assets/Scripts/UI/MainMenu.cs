@@ -10,7 +10,7 @@ public class MainMenu : MonoBehaviour
     void StartGameWithDifficulty(GameManager.Difficulty diff)
     {
         PlayerPrefs.SetInt("SelectedDifficulty", (int)diff);
-        SceneManager.LoadScene("GameScene");
+        SceneManager.LoadScene("Gameplay");
     }
 
     public void QuitGame()
