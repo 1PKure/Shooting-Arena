@@ -1961,6 +1961,7 @@ GameObject:
   - component: {fileID: 686922239}
   - component: {fileID: 686922238}
   - component: {fileID: 686922237}
+  - component: {fileID: 686922241}
   m_Layer: 0
   m_Name: Character
   m_TagString: Player
@@ -2055,6 +2056,24 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &686922241
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 686922235}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6f6b3172cba30cf459d172be3eda0706, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weapons: []
+  currentWeaponIndex: 0
+  playerCamera: {fileID: 0}
+  enemyLayer:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!1 &728401326
 GameObject:
   m_ObjectHideFlags: 0
