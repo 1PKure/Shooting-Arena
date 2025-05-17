@@ -4,15 +4,7 @@ using static GameManager;
 
 public class EnemySpawner : MonoBehaviour
 {
-    [System.Serializable]
-    public class EnemyType
-    {
-        public GameObject enemyPrefab;
-        public int weight = 1;
-    }
-
-    private Difficulty currentDifficulty;
-    public List<EnemyType> enemyTypes = new List<EnemyType>();
+    public List<EnemyData> enemyDataList = new List<EnemyData>();
     public List<Transform> spawnPoints = new List<Transform>();
 
     public int maxEnemies = 10;
@@ -20,31 +12,27 @@ public class EnemySpawner : MonoBehaviour
 
     private List<GameObject> activeEnemies = new List<GameObject>();
     private float nextSpawnTime = 0f;
+    private Difficulty currentDifficulty;
 
     void Update()
     {
-
         if (activeEnemies.Count < maxEnemies && Time.time >= nextSpawnTime)
         {
             SpawnEnemy();
             nextSpawnTime = Time.time + spawnInterval;
         }
 
-
         activeEnemies.RemoveAll(e => e == null || !e.activeInHierarchy);
     }
 
     void SpawnEnemy()
     {
-
         Transform spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Count)];
+        EnemyData selectedData = GetRandomEnemyData();
 
-
-        GameObject enemyPrefab = GetRandomEnemyPrefab();
-
-        if (enemyPrefab != null && spawnPoint != null)
+        if (selectedData != null && selectedData.prefab != null)
         {
-            GameObject enemy = Instantiate(enemyPrefab, spawnPoint.position, spawnPoint.rotation);
+            GameObject enemy = Instantiate(selectedData.prefab, spawnPoint.position, spawnPoint.rotation);
             activeEnemies.Add(enemy);
         }
     }
@@ -54,27 +42,25 @@ public class EnemySpawner : MonoBehaviour
         this.currentDifficulty = difficulty;
     }
 
-
-    GameObject GetRandomEnemyPrefab()
+    EnemyData GetRandomEnemyData()
     {
-        var filtered = enemyTypes.FindAll(et =>
-        (currentDifficulty == Difficulty.Easy && et.enemyPrefab.name.Contains("Static")) ||
-        (currentDifficulty == Difficulty.Medium && et.enemyPrefab.name.Contains("Mover")) ||
-        (currentDifficulty == Difficulty.Hard));
+        List<EnemyData> filtered = enemyDataList.FindAll(data =>
+            (currentDifficulty == Difficulty.Easy && data.enemyType == EnemyTypeEnum.Static) ||
+            (currentDifficulty == Difficulty.Medium && data.enemyType != EnemyTypeEnum.Shooter) ||
+            (currentDifficulty == Difficulty.Hard));
 
         if (filtered.Count == 0) return null;
 
         int totalWeight = 0;
-
-        foreach (var et in filtered) totalWeight += et.weight;
+        foreach (var data in filtered) totalWeight += data.weight;
 
         int rand = Random.Range(0, totalWeight);
         int acc = 0;
-        foreach (var et in filtered)
+        foreach (var data in filtered)
         {
-            acc += et.weight;
+            acc += data.weight;
             if (rand < acc)
-                return et.enemyPrefab;
+                return data;
         }
 
         return null;

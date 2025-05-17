@@ -2,35 +2,26 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
+    [Header("Estadísticas")]
     public int maxHealth = 100;
-    public int currentHealth;
+    protected int currentHealth;
     public int pointValue = 10;
 
-    public float respawnTime = 5f;
-    public bool isActive = true;
-
-    public GameObject hitEffect;
-    public GameObject deathEffect;
-
-    protected GameManager gameManager;
+    [Header("Estado")]
+    protected bool isActive = true;
 
     protected virtual void Start()
     {
         currentHealth = maxHealth;
-        gameManager = FindObjectOfType<GameManager>();
     }
 
-    public virtual void TakeDamage(int damage)
+    public virtual void TakeDamage(int amount)
     {
-        currentHealth -= damage;
+        if (!isActive) return;
 
-        
-        if (hitEffect != null)
-        {
-            Instantiate(hitEffect, transform.position, Quaternion.identity);
-        }
+        currentHealth -= amount;
 
-        if (currentHealth <= 0 && isActive)
+        if (currentHealth <= 0)
         {
             Die();
         }
@@ -40,29 +31,11 @@ public class Enemy : MonoBehaviour
     {
         isActive = false;
 
-        
-        if (deathEffect != null)
+        if (GameManager.Instance != null)
         {
-            Instantiate(deathEffect, transform.position, Quaternion.identity);
+            GameManager.Instance.AddScore(pointValue);
         }
 
-        
-        if (gameManager != null)
-        {
-            gameManager.AddScore(pointValue);
-        }
-
-        
-        gameObject.SetActive(false);
-
-        
-        Invoke("Respawn", respawnTime);
-    }
-
-    protected virtual void Respawn()
-    {
-        currentHealth = maxHealth;
-        isActive = true;
-        gameObject.SetActive(true);
+        Destroy(gameObject);
     }
 }

@@ -42,13 +42,16 @@ public class WeaponSystem : MonoBehaviour
 
     void Update()
     {
-        
+
         if (Input.GetKeyDown(KeyCode.Q))
         {
             SwitchWeapon();
         }
 
-        
+        if (Input.GetKeyDown(KeyCode.Alpha1)) EquipWeapon(0);
+        if (Input.GetKeyDown(KeyCode.Alpha2) && weapons.Length > 1) EquipWeapon(1);
+
+
         if (weapons[currentWeaponIndex].isAutomatic)
         {
             if (Input.GetButton("Fire1") && Time.time >= nextTimeToFire && weapons[currentWeaponIndex].currentAmmo > 0)
@@ -71,6 +74,15 @@ public class WeaponSystem : MonoBehaviour
         {
             Reload();
         }
+    }
+
+    void EquipWeapon(int index)
+    {
+        if (index == currentWeaponIndex) return;
+
+        weapons[currentWeaponIndex].model.SetActive(false);
+        currentWeaponIndex = index;
+        weapons[currentWeaponIndex].model.SetActive(true);
     }
 
     void SwitchWeapon()
@@ -138,15 +150,6 @@ public class WeaponSystem : MonoBehaviour
     void Reload()
     {
         weapons[currentWeaponIndex].currentAmmo = weapons[currentWeaponIndex].maxAmmo;
-    }
-
-    public void AddWeapon(Weapon newWeapon)
-    {
-        var list = new List<Weapon>(weapons);
-        list.Add(newWeapon);
-        weapons = list.ToArray();
-
-        newWeapon.model.SetActive(false);
     }
 
 }

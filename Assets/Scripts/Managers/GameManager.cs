@@ -7,6 +7,7 @@ public class GameManager : MonoBehaviour
 {
     public enum Difficulty { Easy, Medium, Hard }
 
+    [SerializeField] private GameObject victoryPanel;
     [SerializeField] private Difficulty currentDifficulty;
     [SerializeField] private EnemySpawner spawner;
 
@@ -20,8 +21,23 @@ public class GameManager : MonoBehaviour
     private float remainingTime;
     [SerializeField] private TMP_Text timeText;
 
+    public static GameManager Instance;
     private bool isGameOver = false;
+    private int victoryScore = 100;
 
+
+    void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
     void Start()
     {
         Time.timeScale = 1f;
@@ -50,6 +66,11 @@ public class GameManager : MonoBehaviour
         if (remainingTime <= 0)
         {
             GameOver();
+        }
+
+        if (score >= victoryScore)
+        {
+            Victory();
         }
     }
 
@@ -97,6 +118,13 @@ public class GameManager : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
     }
 
+    void Victory()
+    {
+        isGameOver = true;
+        Time.timeScale = 0f;
+        if (victoryPanel != null) victoryPanel.SetActive(true);
+        Cursor.lockState = CursorLockMode.None;
+    }
     public void RestartGame()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);

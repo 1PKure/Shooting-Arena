@@ -7,15 +7,11 @@ public class CameraController : MonoBehaviour
     [SerializeField] private Camera thirdPersonCamera;
 
     [Header("Referencia de cámara")]
-    [SerializeField] private Transform cameraHolder;
     [SerializeField] private Transform thirdPersonFollowPoint;
 
     [Header("Configuración")]
-    [SerializeField] private float sensitivity = 3f;
-    [SerializeField] private float verticalLimit = 80f;
     [SerializeField] private float smoothSpeed = 10f;
 
-    private float xRotation = 0f;
     private bool isFirstPerson = true;
 
     void Start()
@@ -28,7 +24,6 @@ public class CameraController : MonoBehaviour
     void Update()
     {
         HandleCameraSwitch();
-        HandleRotation();
         if (!isFirstPerson) FollowThirdPerson();
     }
 
@@ -39,16 +34,6 @@ public class CameraController : MonoBehaviour
             isFirstPerson = !isFirstPerson;
             SetCameraMode(isFirstPerson);
         }
-    }
-
-    void HandleRotation()
-    {
-        float mouseY = Input.GetAxis("Mouse Y") * sensitivity;
-
-        xRotation -= mouseY;
-        xRotation = Mathf.Clamp(xRotation, -verticalLimit, verticalLimit);
-
-        cameraHolder.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
     }
 
     void FollowThirdPerson()
