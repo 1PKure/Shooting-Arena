@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e241a47bb729e684f82fc3fa83e904f1, type: 3}
   m_Name: ShooterEnemy
   m_EditorClassIdentifier: 
-  prefab: {fileID: 0}
+  prefab: {fileID: 6573663753899751629, guid: 1b361cbe0e7bfce4eae4c0d40c582e3c, type: 3}
   enemyType: 2
   weight: 1

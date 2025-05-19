@@ -2,47 +2,40 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
-    [Header("Cámaras")]
     [SerializeField] private Camera firstPersonCamera;
     [SerializeField] private Camera thirdPersonCamera;
-
-    [Header("Referencia de cámara")]
-    [SerializeField] private Transform thirdPersonFollowPoint;
-
-    [Header("Configuración")]
-    [SerializeField] private float smoothSpeed = 10f;
+    [SerializeField] private Transform player;
+    [SerializeField] private Vector3 thirdPersonOffset = new Vector3(0, 2, -5);
+    [SerializeField] private float transitionSpeed = 5f;
 
     private bool isFirstPerson = true;
 
     void Start()
     {
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+
         SetCameraMode(true);
     }
 
     void Update()
     {
-        HandleCameraSwitch();
-        if (!isFirstPerson) FollowThirdPerson();
-    }
 
-    void HandleCameraSwitch()
-    {
         if (Input.GetKeyDown(KeyCode.C))
         {
             isFirstPerson = !isFirstPerson;
             SetCameraMode(isFirstPerson);
         }
-    }
 
-    void FollowThirdPerson()
-    {
-        if (thirdPersonCamera != null && thirdPersonFollowPoint != null)
+
+        if (!isFirstPerson && thirdPersonCamera.gameObject.activeSelf)
         {
-            Vector3 targetPos = thirdPersonFollowPoint.position;
-            thirdPersonCamera.transform.position = Vector3.Lerp(thirdPersonCamera.transform.position, targetPos, Time.deltaTime * smoothSpeed);
-            thirdPersonCamera.transform.LookAt(thirdPersonFollowPoint.parent.position + Vector3.up * 1.5f); 
+            Vector3 targetPosition = player.position + player.TransformDirection(thirdPersonOffset);
+            thirdPersonCamera.transform.position = Vector3.Lerp(
+                thirdPersonCamera.transform.position,
+                targetPosition,
+                Time.deltaTime * transitionSpeed);
+
+
+            thirdPersonCamera.transform.LookAt(player);
         }
     }
 

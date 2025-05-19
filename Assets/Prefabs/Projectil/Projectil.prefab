@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2641860232543978811}
   - component: {fileID: 5120252884235822678}
   - component: {fileID: 6910742569726037786}
-  - component: {fileID: -2187314132381276998}
+  - component: {fileID: 239800534143376165}
   m_Layer: 0
   m_Name: Projectil
   m_TagString: Untagged
@@ -106,7 +106,7 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &-2187314132381276998
+--- !u!114 &239800534143376165
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -115,12 +115,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 7998187605518762405}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3ee738f9b0136354db583283ec386859, type: 3}
+  m_Script: {fileID: 11500000, guid: 3d4badc5cd1747542ad361de1a46f74f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  explosionRadius: 5
-  damage: 50
-  explosionEffect: {fileID: 0}
-  enemyLayer:
-    serializedVersion: 2
-    m_Bits: 0
+  damage: 10

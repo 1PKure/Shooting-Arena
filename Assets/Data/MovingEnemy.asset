@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e241a47bb729e684f82fc3fa83e904f1, type: 3}
   m_Name: MovingEnemy
   m_EditorClassIdentifier: 
-  prefab: {fileID: 0}
+  prefab: {fileID: 923602710930002107, guid: 39769062b210d004dba096b44d8672f7, type: 3}
   enemyType: 1
   weight: 1
