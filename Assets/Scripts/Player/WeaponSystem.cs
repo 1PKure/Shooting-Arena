@@ -18,8 +18,8 @@ public class WeaponSystem : MonoBehaviour
         public Transform firePoint;
         public GameObject projectilePrefab;
         public float projectileSpeed;
-        public AudioClip fireSound;
-        public ParticleSystem muzzleFlash;
+        //public AudioClip fireSound;
+        //public ParticleSystem muzzleFlash;
     }
 
     public Weapon[] weapons;
@@ -101,12 +101,12 @@ public class WeaponSystem : MonoBehaviour
     {
         weapons[currentWeaponIndex].currentAmmo--;
 
-        
+        /*
         if (weapons[currentWeaponIndex].muzzleFlash != null)
         {
             weapons[currentWeaponIndex].muzzleFlash.Play();
         }
-
+        */
         
         if (weapons[currentWeaponIndex].projectilePrefab != null) 
         {

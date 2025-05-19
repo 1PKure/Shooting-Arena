@@ -21,7 +21,7 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         HandleMovement();
-        HandleLook();
+        //HandleLook();
     }
 
     void HandleMovement()
