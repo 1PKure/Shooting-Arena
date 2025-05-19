@@ -11,10 +11,10 @@ GameObject:
   - component: {fileID: 6042538123423020408}
   - component: {fileID: 8222836939217378971}
   - component: {fileID: 2884364655671096230}
-  - component: {fileID: -385357574964144881}
+  - component: {fileID: -8611593433905314754}
   m_Layer: 7
   m_Name: MovingEnemy
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -74,7 +74,7 @@ CapsuleCollider:
   m_Height: 2.6092913
   m_Direction: 1
   m_Center: {x: 0, y: 0.80464566, z: 0}
---- !u!114 &-385357574964144881
+--- !u!114 &-8611593433905314754
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -83,10 +83,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 923602710930002107}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 845fde7feec631a45a1892d768b9f184, type: 3}
+  m_Script: {fileID: 11500000, guid: 05306bf45cd44f847880241f79c76a27, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 100
+  maxHealth: 100
+  pointValue: 10
 --- !u!1001 &8601857311294435455
 PrefabInstance:
   m_ObjectHideFlags: 0

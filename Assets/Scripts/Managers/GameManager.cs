@@ -125,10 +125,35 @@ public class GameManager : MonoBehaviour
         if (victoryPanel != null) victoryPanel.SetActive(true);
         Cursor.lockState = CursorLockMode.None;
     }
+
     public void RestartGame()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        FullReset();
+        SceneManager.LoadScene("MainMenu");
     }
+    public void FullReset()
+    {
+        isGameOver = false;
+        score = 0;
+        remainingTime = gameTime;
+        Time.timeScale = 1f;
+
+        if (victoryPanel != null) victoryPanel.SetActive(false);
+        if (gameOverPanel != null) gameOverPanel.SetActive(false);
+        UpdateScoreUI();
+        UpdateTimeUI();
+
+        var player = FindObjectOfType<PlayerController>();
+        if (player != null) player.ResetPlayer();
+
+        foreach (var bullet in GameObject.FindGameObjectsWithTag("Bullet"))
+            Destroy(bullet);
+
+        if (spawner != null) spawner.ResetSpawner();
+
+        Cursor.lockState = CursorLockMode.Locked;
+    }
+
 
     public void QuitGame()
     {

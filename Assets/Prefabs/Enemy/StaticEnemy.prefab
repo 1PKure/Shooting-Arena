@@ -11,10 +11,10 @@ GameObject:
   - component: {fileID: 3593747794710347149}
   - component: {fileID: 4819709913985580903}
   - component: {fileID: 5969907695402855463}
-  - component: {fileID: 1564814005334820926}
+  - component: {fileID: 2850051818778497782}
   m_Layer: 7
   m_Name: StaticEnemy
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -72,7 +72,7 @@ CapsuleCollider:
   m_Height: 2.7274253
   m_Direction: 1
   m_Center: {x: 0, y: 0.86371267, z: 0}
---- !u!114 &1564814005334820926
+--- !u!114 &2850051818778497782
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -81,10 +81,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 6679925811987664899}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 845fde7feec631a45a1892d768b9f184, type: 3}
+  m_Script: {fileID: 11500000, guid: 05306bf45cd44f847880241f79c76a27, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 100
+  maxHealth: 100
+  pointValue: 10
 --- !u!1001 &5767351854716658930
 PrefabInstance:
   m_ObjectHideFlags: 0

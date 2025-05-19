@@ -42,10 +42,10 @@ GameObject:
   - component: {fileID: 1967023200075488777}
   - component: {fileID: 4270799424371042501}
   - component: {fileID: 2787858152128455271}
-  - component: {fileID: -8746649486818118305}
+  - component: {fileID: -3963931263851352700}
   m_Layer: 7
   m_Name: ShootingEnemy
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -110,7 +110,7 @@ CapsuleCollider:
   m_Height: 2.3868327
   m_Direction: 1
   m_Center: {x: 0, y: 0.69341636, z: 0}
---- !u!114 &-8746649486818118305
+--- !u!114 &-3963931263851352700
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -119,10 +119,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 6573663753899751629}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 845fde7feec631a45a1892d768b9f184, type: 3}
+  m_Script: {fileID: 11500000, guid: 05306bf45cd44f847880241f79c76a27, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 100
+  maxHealth: 100
+  pointValue: 10
 --- !u!1001 &6062288486669444955
 PrefabInstance:
   m_ObjectHideFlags: 0

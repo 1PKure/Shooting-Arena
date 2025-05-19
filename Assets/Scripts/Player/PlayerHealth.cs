@@ -10,9 +10,6 @@ public class PlayerHealth : MonoBehaviour
     public Image healthBar;
     public TMP_Text healthText;
 
-    public float invincibilityTime = 0.5f;
-    private bool isInvincible = false;
-
     void Start()
     {
         currentHealth = maxHealth;
@@ -21,15 +18,11 @@ public class PlayerHealth : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
-        if (isInvincible) return;
-
         currentHealth -= damage;
 
         currentHealth = Mathf.Max(currentHealth, 0);
 
         UpdateUI();
-        isInvincible = true;
-        Invoke("ResetInvincibility", invincibilityTime);
 
         if (currentHealth <= 0)
         {
@@ -37,10 +30,6 @@ public class PlayerHealth : MonoBehaviour
         }
     }
 
-    void ResetInvincibility()
-    {
-        isInvincible = false;
-    }
 
     void UpdateUI()
     {

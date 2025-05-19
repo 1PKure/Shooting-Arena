@@ -14,7 +14,6 @@ public class ShooterEnemy : Enemy
 
     protected override void Start()
     {
-        //aca puedo usar ScriptableObject
         base.Start();
         maxHealth = 100;
         currentHealth = maxHealth;

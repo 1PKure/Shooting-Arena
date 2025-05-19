@@ -2,17 +2,13 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-    [Header("Estadísticas")]
-    public int maxHealth = 100;
+    [SerializeField] private EnemyStatsData stats;
     protected int currentHealth;
-    public int pointValue = 10;
-
-    [Header("Estado")]
     protected bool isActive = true;
 
     protected virtual void Start()
     {
-        currentHealth = maxHealth;
+        currentHealth = stats.maxHealth;
     }
 
     public virtual void TakeDamage(int amount)
@@ -33,7 +29,7 @@ public class Enemy : MonoBehaviour
 
         if (GameManager.Instance != null)
         {
-            GameManager.Instance.AddScore(pointValue);
+            GameManager.Instance.AddScore(stats.pointValue);
         }
 
         Destroy(gameObject);

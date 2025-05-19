@@ -42,6 +42,16 @@ public class EnemySpawner : MonoBehaviour
         this.currentDifficulty = difficulty;
     }
 
+    public void ResetSpawner()
+    {
+        foreach (var enemy in GameObject.FindGameObjectsWithTag("Enemy"))
+        {
+            Destroy(enemy);
+        }
+        nextSpawnTime = Time.time + spawnInterval;
+    }
+
+
     EnemyData GetRandomEnemyData()
     {
         List<EnemyData> filtered = enemyDataList.FindAll(data =>

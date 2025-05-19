@@ -30,6 +30,7 @@ public class WeaponSystem : MonoBehaviour
 
     private float nextTimeToFire = 0f;
     private bool isFiring = false;
+    private int damage = 50;
 
     void Start()
     {
@@ -80,22 +81,31 @@ public class WeaponSystem : MonoBehaviour
     {
         if (index == currentWeaponIndex) return;
 
-        weapons[currentWeaponIndex].model.SetActive(false);
+        foreach (var weapon in weapons)
+        {
+            weapon.model.SetActive(false);
+        }
+
         currentWeaponIndex = index;
+
         weapons[currentWeaponIndex].model.SetActive(true);
     }
+
 
     void SwitchWeapon()
     {
-        
-        weapons[currentWeaponIndex].model.SetActive(false);
+        foreach (var weapon in weapons)
+        {
+            weapon.model.SetActive(false);
+        }
 
-        
         currentWeaponIndex = (currentWeaponIndex + 1) % weapons.Length;
 
-        
         weapons[currentWeaponIndex].model.SetActive(true);
+
+        Debug.Log("Switched to: " + weapons[currentWeaponIndex].name);
     }
+
 
     void Shoot()
     {
@@ -136,14 +146,17 @@ public class WeaponSystem : MonoBehaviour
 
     void ShootProjectile()
     {
-        
-        GameObject projectile = Instantiate(weapons[currentWeaponIndex].projectilePrefab, weapons[currentWeaponIndex].firePoint.position, weapons[currentWeaponIndex].firePoint.rotation);
+        GameObject projectile = Instantiate(
+            weapons[currentWeaponIndex].projectilePrefab,
+            weapons[currentWeaponIndex].firePoint.position,
+            weapons[currentWeaponIndex].firePoint.rotation
+        );
+
+        projectile.transform.forward = playerCamera.transform.forward;
+
         Rigidbody rb = projectile.GetComponent<Rigidbody>();
+        rb.AddForce(projectile.transform.forward * weapons[currentWeaponIndex].projectileSpeed, ForceMode.Impulse);
 
-        
-        rb.AddForce(playerCamera.transform.forward * weapons[currentWeaponIndex].projectileSpeed, ForceMode.Impulse);
-
-        
         Destroy(projectile, 3f);
     }
 
@@ -151,5 +164,16 @@ public class WeaponSystem : MonoBehaviour
     {
         weapons[currentWeaponIndex].currentAmmo = weapons[currentWeaponIndex].maxAmmo;
     }
+
+    public void ResetWeapons()
+    {
+        for (int i = 0; i < weapons.Length; i++)
+        {
+            weapons[i].currentAmmo = weapons[i].maxAmmo;
+            weapons[i].model.SetActive(i == 0);
+        }
+        currentWeaponIndex = 0;
+    }
+
 
 }
