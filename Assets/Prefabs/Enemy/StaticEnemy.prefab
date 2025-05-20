@@ -47,8 +47,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d7be9be8157bc7e48ba3daaf003686f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 100
-  pointValue: 10
+  stats: {fileID: 11400000, guid: 0a4258de8af93014fa550045efe063aa, type: 2}
 --- !u!136 &5969907695402855463
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -84,8 +83,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05306bf45cd44f847880241f79c76a27, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 100
-  pointValue: 10
+  stats: {fileID: 11400000, guid: 0a4258de8af93014fa550045efe063aa, type: 2}
 --- !u!1001 &5767351854716658930
 PrefabInstance:
   m_ObjectHideFlags: 0

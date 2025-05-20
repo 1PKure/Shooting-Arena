@@ -143,8 +143,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09d8ca2864e1967408e1b3903d4dee5b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 5
-  mouseSensitivity: 3
+  playerData: {fileID: 11400000, guid: 022d3b1e7fb288446b441f3428c470b2, type: 2}
   cameraHolder: {fileID: 3951504787223785028}
 --- !u!114 &7933657536823242416
 MonoBehaviour:
@@ -159,10 +158,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 100
-  currentHealth: 0
+  currentHealth: 100
   healthBar: {fileID: 0}
   healthText: {fileID: 0}
-  invincibilityTime: 0.5
 --- !u!143 &4509839212995484826
 CharacterController:
   m_ObjectHideFlags: 0
@@ -204,31 +202,31 @@ MonoBehaviour:
   weapons:
   - name: Rifle
     model: {fileID: 4662108993736336128}
-    damage: 10
-    fireRate: 1
+    damage: 35
+    fireRate: 0.5
     maxAmmo: 50
     currentAmmo: 20
     isAutomatic: 0
     range: 5
     firePoint: {fileID: 1731268272818346816}
     projectilePrefab: {fileID: 1878670205805360, guid: 9643aebe3b164bc4cae610a164fe007a, type: 3}
-    projectileSpeed: 5
+    projectileSpeed: 10
   - name: Rocket
     model: {fileID: 1752514604370940, guid: 118c44d3f9a3bcf49a971bc47fc1a5e2, type: 3}
-    damage: 20
-    fireRate: 0.5
+    damage: 50
+    fireRate: 1
     maxAmmo: 20
     currentAmmo: 10
     isAutomatic: 0
-    range: 0
+    range: 10
     firePoint: {fileID: 4835325753308726107}
     projectilePrefab: {fileID: 1634727942366104, guid: 109d2cf8b02cb1b498b03bb4b6ee117d, type: 3}
-    projectileSpeed: 2
+    projectileSpeed: 10
   currentWeaponIndex: 0
   playerCamera: {fileID: 4882359132843580725}
   enemyLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 128
 --- !u!1 &3302862168282255567
 GameObject:
   m_ObjectHideFlags: 0
@@ -506,9 +504,13 @@ PrefabInstance:
       propertyPath: m_Name
       value: SM_Wep_RPG_01
       objectReference: {fileID: 0}
+    - target: {fileID: 1752514604370940, guid: 118c44d3f9a3bcf49a971bc47fc1a5e2, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4606031021586162, guid: 118c44d3f9a3bcf49a971bc47fc1a5e2, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 0.274
       objectReference: {fileID: 0}
     - target: {fileID: 4606031021586162, guid: 118c44d3f9a3bcf49a971bc47fc1a5e2, type: 3}
       propertyPath: m_LocalPosition.y

@@ -9,9 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e241a47bb729e684f82fc3fa83e904f1, type: 3}
-  m_Name: MovingEnemy
+  m_Script: {fileID: 11500000, guid: f1a66d682bc34ab4baa913e548dc4a20, type: 3}
+  m_Name: EnemyStatsData
   m_EditorClassIdentifier: 
-  prefab: {fileID: 923602710930002107, guid: 39769062b210d004dba096b44d8672f7, type: 3}
-  enemyType: 1
-  weight: 2
+  maxHealth: 100
+  pointValue: 25

@@ -11,12 +11,7 @@ public class MovingEnemy : Enemy
 
     protected override void Start()
     {
-        //aca puedo usar ScriptableObject
         base.Start();
-        maxHealth = 75;
-        currentHealth = maxHealth;
-        pointValue = 20;
-
         startPosition = transform.position;
     }
 

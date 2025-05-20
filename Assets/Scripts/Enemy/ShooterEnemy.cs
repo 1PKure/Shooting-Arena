@@ -11,14 +11,9 @@ public class ShooterEnemy : Enemy
 
     private Transform player;
     private float nextTimeToFire = 0f;
-
     protected override void Start()
     {
         base.Start();
-        maxHealth = 100;
-        currentHealth = maxHealth;
-        pointValue = 30;
-
         player = GameObject.FindGameObjectWithTag("Player").transform;
     }
 

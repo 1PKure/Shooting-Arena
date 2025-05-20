@@ -79,8 +79,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b4c3f7c093caa434cb431fcd2023cf38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 100
-  pointValue: 10
+  stats: {fileID: 11400000, guid: 0a4258de8af93014fa550045efe063aa, type: 2}
   detectionRange: 15
   fireRate: 1
   damage: 10
@@ -122,8 +121,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05306bf45cd44f847880241f79c76a27, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 100
-  pointValue: 10
+  stats: {fileID: 11400000, guid: 0a4258de8af93014fa550045efe063aa, type: 2}
 --- !u!1001 &6062288486669444955
 PrefabInstance:
   m_ObjectHideFlags: 0

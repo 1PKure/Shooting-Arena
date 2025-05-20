@@ -9,9 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6042538123423020408}
-  - component: {fileID: 8222836939217378971}
   - component: {fileID: 2884364655671096230}
   - component: {fileID: -8611593433905314754}
+  - component: {fileID: 3367751647145765677}
   m_Layer: 7
   m_Name: MovingEnemy
   m_TagString: Enemy
@@ -35,22 +35,6 @@ Transform:
   - {fileID: 8130500201269974932}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8222836939217378971
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 923602710930002107}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4964bbc9a15e60949bd0bd5b1589fc4c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxHealth: 100
-  pointValue: 10
-  moveSpeed: 3
-  moveDistance: 5
 --- !u!136 &2884364655671096230
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -86,8 +70,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05306bf45cd44f847880241f79c76a27, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 100
-  pointValue: 10
+  stats: {fileID: 11400000, guid: 0a4258de8af93014fa550045efe063aa, type: 2}
+--- !u!114 &3367751647145765677
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 923602710930002107}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4964bbc9a15e60949bd0bd5b1589fc4c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  stats: {fileID: 11400000, guid: 0a4258de8af93014fa550045efe063aa, type: 2}
+  moveSpeed: 3
+  moveDistance: 5
 --- !u!1001 &8601857311294435455
 PrefabInstance:
   m_ObjectHideFlags: 0
