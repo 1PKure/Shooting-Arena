@@ -105,6 +105,7 @@ GameObject:
   - component: {fileID: 7933657536823242416}
   - component: {fileID: 4509839212995484826}
   - component: {fileID: 5381263552071112525}
+  - component: {fileID: 4258435284626330049}
   m_Layer: 0
   m_Name: Character
   m_TagString: Player
@@ -223,10 +224,28 @@ MonoBehaviour:
     projectilePrefab: {fileID: 1634727942366104, guid: 109d2cf8b02cb1b498b03bb4b6ee117d, type: 3}
     projectileSpeed: 10
   currentWeaponIndex: 0
+  ammoText: {fileID: 0}
+  reloadHintText: {fileID: 0}
   playerCamera: {fileID: 4882359132843580725}
   enemyLayer:
     serializedVersion: 2
     m_Bits: 128
+--- !u!114 &4258435284626330049
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3248062341527016566}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5edb00887d5d7a41ac1bbac18162195, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  minX: -43.27
+  maxX: -77.8
+  minZ: -148.9
+  maxZ: -114.3
 --- !u!1 &3302862168282255567
 GameObject:
   m_ObjectHideFlags: 0

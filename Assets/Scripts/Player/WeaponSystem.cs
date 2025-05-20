@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 
 public class WeaponSystem : MonoBehaviour
 {
@@ -22,11 +23,12 @@ public class WeaponSystem : MonoBehaviour
         //public ParticleSystem muzzleFlash;
     }
 
-    public Weapon[] weapons;
-    public int currentWeaponIndex = 0;
-
-    public Camera playerCamera;
-    public LayerMask enemyLayer;
+    [SerializeField] private Weapon[] weapons;
+    [SerializeField] private int currentWeaponIndex = 0;
+    [SerializeField] private TextMeshProUGUI ammoText;
+    [SerializeField] private TextMeshProUGUI reloadHintText;
+    [SerializeField] private Camera playerCamera;
+    [SerializeField] private LayerMask enemyLayer;
 
     private float nextTimeToFire = 0f;
     private bool isFiring = false;
@@ -43,7 +45,7 @@ public class WeaponSystem : MonoBehaviour
 
     void Update()
     {
-
+        UpdateUI();
         if (Input.GetKeyDown(KeyCode.Q))
         {
             SwitchWeapon();
@@ -76,7 +78,14 @@ public class WeaponSystem : MonoBehaviour
             Reload();
         }
     }
+    void UpdateUI()
+    {
+        if (ammoText != null)
+            ammoText.text = "Bullets: " + weapons[currentWeaponIndex].currentAmmo;
 
+        if (reloadHintText != null)
+            reloadHintText.gameObject.SetActive(weapons[currentWeaponIndex].currentAmmo == 0);
+    }
     void EquipWeapon(int index)
     {
         if (index == currentWeaponIndex) return;

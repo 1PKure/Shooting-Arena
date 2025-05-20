@@ -13,6 +13,13 @@ public class MainMenu : MonoBehaviour
         SceneManager.LoadScene("Gameplay");
     }
 
+    private void Awake()
+    {
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
+    }
+
     public void QuitGame()
     {
         Application.Quit();
