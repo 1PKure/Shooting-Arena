@@ -105,7 +105,6 @@ GameObject:
   - component: {fileID: 7933657536823242416}
   - component: {fileID: 4509839212995484826}
   - component: {fileID: 5381263552071112525}
-  - component: {fileID: 4258435284626330049}
   m_Layer: 0
   m_Name: Character
   m_TagString: Player
@@ -230,22 +229,6 @@ MonoBehaviour:
   enemyLayer:
     serializedVersion: 2
     m_Bits: 128
---- !u!114 &4258435284626330049
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3248062341527016566}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b5edb00887d5d7a41ac1bbac18162195, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  minX: -43.27
-  maxX: -77.8
-  minZ: -148.9
-  maxZ: -114.3
 --- !u!1 &3302862168282255567
 GameObject:
   m_ObjectHideFlags: 0
@@ -319,7 +302,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3951504787223785028}
-  - component: {fileID: 3983331473014265633}
   m_Layer: 0
   m_Name: CameraHolder
   m_TagString: Untagged
@@ -343,20 +325,6 @@ Transform:
   - {fileID: 5612389610159522057}
   m_Father: {fileID: 5429257504562071690}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3983331473014265633
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8586911244961027249}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 20c0fc0384b3af4469c0a7404c57669a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  playerBody: {fileID: 1878176038919285895}
-  mouseSensitivity: 100
 --- !u!1001 &2510771940564381768
 PrefabInstance:
   m_ObjectHideFlags: 0
