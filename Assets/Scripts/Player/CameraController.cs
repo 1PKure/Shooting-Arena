@@ -12,13 +12,13 @@ public class CameraController : MonoBehaviour
 
     void Start()
     {
-
+        
         SetCameraMode(true);
     }
 
     void Update()
     {
-
+        
         if (Input.GetKeyDown(KeyCode.C))
         {
             isFirstPerson = !isFirstPerson;
@@ -33,7 +33,7 @@ public class CameraController : MonoBehaviour
                 targetPosition,
                 Time.deltaTime * transitionSpeed);
 
-
+           
             thirdPersonCamera.transform.LookAt(player);
         }
     }

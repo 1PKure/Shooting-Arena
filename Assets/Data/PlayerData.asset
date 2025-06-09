@@ -15,4 +15,4 @@ MonoBehaviour:
   maxHealth: 100
   moveSpeed: 5
   mouseSensitivity: 3
-  spawnPosition: {x: -63.785, y: 24.925, z: -132.33}
+  spawnPosition: {x: 0, y: 1.3, z: -4}
