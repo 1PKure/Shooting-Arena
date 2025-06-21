@@ -1,11 +1,19 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class PauseMenu : MonoBehaviour
 {
-    public GameObject pausePanel;
+    [SerializeField] private GameObject pausePanel;
+    [SerializeField] private GameObject mainPanel;
     private bool isPaused = false;
+    private PlayerController playerController;
 
+    void Start()
+    {
+        pausePanel.SetActive(false);
+        playerController = FindObjectOfType<PlayerController>();
+    }
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Escape))
@@ -16,10 +24,13 @@ public class PauseMenu : MonoBehaviour
 
     public void TogglePause()
     {
+        mainPanel.SetActive(!isPaused);
         isPaused = !isPaused;
         pausePanel.SetActive(isPaused);
         Time.timeScale = isPaused ? 0f : 1f;
         Cursor.lockState = isPaused ? CursorLockMode.None : CursorLockMode.Locked;
+        if (playerController != null)
+            playerController.enabled = !isPaused;
     }
 
     public void GoToMainMenu()

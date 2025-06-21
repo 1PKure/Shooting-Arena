@@ -154,6 +154,38 @@ public class GameManager : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
     }
 
+    public void SaveGame()
+    {
+        var player = FindObjectOfType<PlayerController>();
+
+        GameData data = new GameData
+        {
+            score = score,
+            remainingTime = remainingTime,
+            difficulty = (int)currentDifficulty,
+            equippedWeapon = PlayerPrefs.GetString("EquippedWeapon", "DefaultGun"),
+            playerPosition = new SerializableVector3(player.transform.position)
+        };
+
+        SaveSystem.Save(data);
+    }
+
+    public void LoadGame()
+    {
+        GameData data = SaveSystem.Load();
+        if (data == null) return;
+
+        score = data.score;
+        remainingTime = data.remainingTime;
+        currentDifficulty = (Difficulty)data.difficulty;
+        PlayerPrefs.SetString("EquippedWeapon", data.equippedWeapon);
+        FindObjectOfType<PlayerController>().transform.position = data.playerPosition.ToVector3();
+
+        UpdateScoreUI();
+        UpdateTimeUI();
+    }
+
+    public void DeleteSave() => SaveSystem.DeleteSave();
 
     public void QuitGame()
     {

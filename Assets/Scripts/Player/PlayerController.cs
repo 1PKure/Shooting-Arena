@@ -7,6 +7,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Transform cameraHolder;
 
     private CharacterController controller;
+    private PlayerInputHandler input;
     private Animator animator;
     private float xRotation = 0f;
     private int currentHealth;
@@ -23,6 +24,7 @@ public class PlayerController : MonoBehaviour
 
     void Start()
     {
+        input = GetComponent<PlayerInputHandler>();
         controller = GetComponent<CharacterController>();
         animator = GetComponent<Animator>();
         Cursor.lockState = CursorLockMode.Locked;
@@ -53,17 +55,20 @@ public class PlayerController : MonoBehaviour
         {
             velocity.y = -2f;
         }
-        float x = Input.GetAxis("Horizontal");
-        float z = Input.GetAxis("Vertical");
-        if (Input.GetButtonDown("Jump") && isGrounded)
-            velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
-        Vector3 move = transform.right * x + transform.forward * z;
-        move *= playerData.moveSpeed * Time.deltaTime;
-        velocity.y += gravity * Time.deltaTime;
-        controller.Move(velocity * Time.deltaTime);
 
-        controller.Move(move);
+        Vector2 moveInput = input.MoveInput;
+        Debug.Log("Move Input: " + moveInput);
+        Vector3 move = transform.right * moveInput.x + transform.forward * moveInput.y;
+
+        if (input.JumpPressed && isGrounded)
+            velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
+
+        velocity.y += gravity * Time.deltaTime;
+
+        Vector3 finalMove = move * playerData.moveSpeed + Vector3.up * velocity.y;
+        controller.Move(finalMove * Time.deltaTime);
     }
+
 
     private void UpdateActiveCamera()
     {
@@ -73,11 +78,10 @@ public class PlayerController : MonoBehaviour
 
     private void MouseRotation()
     {
-        float mouseXInput = Input.GetAxis("Mouse X") * playerData.mouseSensitivity;
-        float mouseYInput = Input.GetAxis("Mouse Y") * playerData.mouseSensitivity;
-
-        mouseX += mouseXInput;
-        mouseY -= mouseYInput;
+        Vector2 lookInput = input.LookInput;
+        lookInput *= playerData.mouseSensitivity * Time.deltaTime;
+        mouseX += lookInput.x;
+        mouseY -= lookInput.y;
         mouseY = Mathf.Clamp(mouseY, -80f, 80f);
 
         cameraHolder.transform.localRotation = Quaternion.Euler(mouseY, 0f, 0f);
