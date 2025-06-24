@@ -16,6 +16,7 @@ public class PlayerController : MonoBehaviour
     private float mouseY = 0f;
     private Vector3 velocity;
     private bool isGrounded;
+    private Vector2 moveInput;
     [SerializeField] private float jumpHeight = 2f;
     [SerializeField] private float gravity = -9.81f;
     [SerializeField] private Transform groundCheck;
@@ -33,7 +34,6 @@ public class PlayerController : MonoBehaviour
         ResetPlayer();
         UpdateActiveCamera();
     }
-
     public void ResetPlayer()
     {
         transform.position = playerData.spawnPosition;
@@ -56,7 +56,12 @@ public class PlayerController : MonoBehaviour
             velocity.y = -2f;
         }
 
-        Vector2 moveInput = input.MoveInput;
+        Move();
+    }
+
+    private void Move()
+    {
+        
         Debug.Log("Move Input: " + moveInput);
         Vector3 move = transform.right * moveInput.x + transform.forward * moveInput.y;
 
@@ -69,6 +74,10 @@ public class PlayerController : MonoBehaviour
         controller.Move(finalMove * Time.deltaTime);
     }
 
+    public void SetInput(Vector2 move)
+    {
+        moveInput = move;
+    }
 
     private void UpdateActiveCamera()
     {

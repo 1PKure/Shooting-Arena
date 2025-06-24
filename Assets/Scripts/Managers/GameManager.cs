@@ -23,7 +23,8 @@ public class GameManager : MonoBehaviour
 
     public static GameManager Instance;
     private bool isGameOver = false;
-    private int victoryScore = 100;
+    private int victoryScore = 50;
+    private int killCount = 0;
 
 
     void Awake()
@@ -79,7 +80,14 @@ public class GameManager : MonoBehaviour
         if (isGameOver) return;
 
         score += points;
+        killCount++;
+
         UpdateScoreUI();
+
+        if (killCount >= victoryScore)
+        {
+            Victory();
+        }
     }
 
     void UpdateScoreUI()

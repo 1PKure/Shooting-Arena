@@ -2,8 +2,8 @@ using UnityEngine;
 
 public class FirstPersonCamera : MonoBehaviour
 {
-    public Transform playerBody;
-    public float mouseSensitivity = 100f;
+    [SerializeField] private Transform playerBody;
+    [SerializeField] private float mouseSensitivity = 100f;
 
     float xRotation = 0f;
 
