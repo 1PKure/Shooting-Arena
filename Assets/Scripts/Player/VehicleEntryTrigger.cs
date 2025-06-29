@@ -11,9 +11,10 @@ public class VehicleEntryTrigger : MonoBehaviour
             DriveableVehicle vehicle = GetComponentInParent<DriveableVehicle>();
             if (vehicle != null)
             {
-                vehicle.EnterVehicle(other.transform);
+                vehicle.EnterVehicle(other.gameObject);
             }
         }
     }
 }
+
 

@@ -4,10 +4,13 @@ using UnityEngine;
 
 public class DriveableVehicle : MonoBehaviour
 {
-    [SerializeField] private float moveSpeed = 10f;
-    [SerializeField] private float turnSpeed = 100f;
-    [SerializeField] private bool isDriving = false;
-    [SerializeField] private Transform player;
+    public Transform vehicleCamera;
+    private GameObject player;
+    private Transform playerCamera;
+    private bool isDriving = false;
+
+    public float moveSpeed = 10f;
+    public float turnSpeed = 100f;
 
     void Update()
     {
@@ -26,18 +29,35 @@ public class DriveableVehicle : MonoBehaviour
         }
     }
 
-    public void EnterVehicle(Transform playerTransform)
+    public void EnterVehicle(GameObject playerObj)
     {
-        player = playerTransform;
-        player.gameObject.SetActive(false);
+        player = playerObj;
+        playerCamera = Camera.main.transform;
+
+        player.SetActive(false);
+        if (playerCamera != null)
+            playerCamera.gameObject.SetActive(false);
+        if (vehicleCamera != null)
+            vehicleCamera.gameObject.SetActive(true);
+
         isDriving = true;
     }
 
-    void ExitVehicle()
+    public void ExitVehicle()
     {
-        player.position = transform.position + transform.right * 2f;
-        player.gameObject.SetActive(true);
+        if (player != null)
+        {
+            player.transform.position = transform.position + transform.right * 2f;
+            player.SetActive(true);
+
+            Camera.main.gameObject.SetActive(true);
+        }
+
+        if (vehicleCamera != null)
+            vehicleCamera.gameObject.SetActive(false);
+
         isDriving = false;
     }
 }
+
 

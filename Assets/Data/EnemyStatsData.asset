@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1a66d682bc34ab4baa913e548dc4a20, type: 3}
   m_Name: EnemyStatsData
   m_EditorClassIdentifier: 
-  maxHealth: 100
+  maxHealth: 50
   pointValue: 25

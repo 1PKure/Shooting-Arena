@@ -7,7 +7,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Transform cameraHolder;
 
     private CharacterController controller;
-    private PlayerInputHandler input;
     private Animator animator;
     private float xRotation = 0f;
     private int currentHealth;
@@ -16,16 +15,17 @@ public class PlayerController : MonoBehaviour
     private float mouseY = 0f;
     private Vector3 velocity;
     private bool isGrounded;
-    private Vector2 moveInput;
     [SerializeField] private float jumpHeight = 2f;
     [SerializeField] private float gravity = -9.81f;
     [SerializeField] private Transform groundCheck;
     [SerializeField] private float groundDistance = 0.4f;
     [SerializeField] private LayerMask groundMask;
+    private PlayerInputReader input;
+
 
     void Start()
     {
-        input = GetComponent<PlayerInputHandler>();
+        input = GetComponent<PlayerInputReader>();
         controller = GetComponent<CharacterController>();
         animator = GetComponent<Animator>();
         Cursor.lockState = CursorLockMode.Locked;
@@ -34,6 +34,7 @@ public class PlayerController : MonoBehaviour
         ResetPlayer();
         UpdateActiveCamera();
     }
+
     public void ResetPlayer()
     {
         transform.position = playerData.spawnPosition;
@@ -43,6 +44,7 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+        if (input == null) return;
         HandleMovement();
         UpdateActiveCamera();
         MouseRotation();
@@ -56,42 +58,31 @@ public class PlayerController : MonoBehaviour
             velocity.y = -2f;
         }
 
-        Move();
-    }
 
-    private void Move()
-    {
-        
-        Debug.Log("Move Input: " + moveInput);
+        Vector2 moveInput = input.MoveInput;
         Vector3 move = transform.right * moveInput.x + transform.forward * moveInput.y;
-
-        if (input.JumpPressed && isGrounded)
-            velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
+        move *= playerData.moveSpeed * Time.deltaTime;
 
         velocity.y += gravity * Time.deltaTime;
+        if (Input.GetButtonDown("Jump") && isGrounded)
+            velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
 
-        Vector3 finalMove = move * playerData.moveSpeed + Vector3.up * velocity.y;
-        controller.Move(finalMove * Time.deltaTime);
-    }
-
-    public void SetInput(Vector2 move)
-    {
-        moveInput = move;
+        controller.Move(velocity * Time.deltaTime);
+        controller.Move(move);
     }
 
     private void UpdateActiveCamera()
     {
         activeCamera = Camera.main;
     }
+
     private float sensitivityMultiplier;
 
     private void MouseRotation()
     {
-        Vector2 lookInput = input.LookInput;
-        lookInput *= playerData.mouseSensitivity * Time.deltaTime;
-        mouseX += lookInput.x;
-        mouseY -= lookInput.y;
-        mouseY = Mathf.Clamp(mouseY, -80f, 80f);
+        Vector2 lookInput = input.LookInput * playerData.mouseSensitivity;
+        xRotation -= lookInput.y;
+        xRotation = Mathf.Clamp(xRotation, -80f, 80f);
 
         cameraHolder.transform.localRotation = Quaternion.Euler(mouseY, 0f, 0f);
         transform.rotation = Quaternion.Euler(0f, mouseX, 0f);

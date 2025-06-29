@@ -20,7 +20,7 @@ public class PlayerInputHandler : MonoBehaviour
         playerInput = GetComponent<PlayerInput>();
         playerController = GetComponent<PlayerController>();
         playerInput.actions["Move"].performed += Move;
-        playerInput.actions["Move"].canceled += ctx => playerController.SetInput(Vector2.zero);
+        //playerInput.actions["Move"].canceled += ctx => playerController.SetInput(Vector2.zero);
 
 
         /*
@@ -39,7 +39,7 @@ public class PlayerInputHandler : MonoBehaviour
     public void Move(InputAction.CallbackContext ctx)
     {
         Debug.Log("Se movio");
-        playerController.SetInput(ctx.ReadValue<Vector2>());
+        //playerController.SetInput(ctx.ReadValue<Vector2>());
     }
     //void OnDisable() => controls.Gameplay.Disable();
 }

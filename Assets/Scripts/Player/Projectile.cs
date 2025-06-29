@@ -7,13 +7,19 @@ public class Projectile : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        Enemy enemy = collision.collider.GetComponent<Enemy>();
-        if (enemy != null)
+        if (collision.gameObject.CompareTag("Enemy"))
         {
-            enemy.TakeDamage(damage);
-            Destroy(gameObject);
+            FeedbackManager.Instance.PlayHitFeedback(transform.position);
+            Enemy enemy = collision.collider.GetComponent<Enemy>();
+            if (enemy != null)
+            {
+                enemy.TakeDamage(damage);
+                Destroy(gameObject);
+            }
         }
-
-
+        else
+        {
+            FeedbackManager.Instance.PlayMissFeedback(transform.position);
+        }
     }
 }

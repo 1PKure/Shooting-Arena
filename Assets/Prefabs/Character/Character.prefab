@@ -105,8 +105,6 @@ GameObject:
   - component: {fileID: 7933657536823242416}
   - component: {fileID: 4509839212995484826}
   - component: {fileID: 5381263552071112525}
-  - component: {fileID: 1459853107248626114}
-  - component: {fileID: 1370545205831854465}
   m_Layer: 0
   m_Name: Character
   m_TagString: Player
@@ -238,68 +236,6 @@ MonoBehaviour:
   enemyLayer:
     serializedVersion: 2
     m_Bits: 128
---- !u!114 &1459853107248626114
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3248062341527016566}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Actions: {fileID: -944628639613478452, guid: a1b0f8a024c88414e8910a8e22ae8e21, type: 3}
-  m_NotificationBehavior: 0
-  m_UIInputModule: {fileID: 0}
-  m_DeviceLostEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  m_DeviceRegainedEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  m_ControlsChangedEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  m_ActionEvents:
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: 01a12138-333f-46d0-be62-a2788a39752f
-    m_ActionName: Gameplay/Move
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: 18c931da-d511-4bf9-bc5e-e472e021ac1a
-    m_ActionName: Gameplay/Look[/Mouse/delta]
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: 5aec56f1-28b1-4b55-9161-603c57559ee0
-    m_ActionName: Gameplay/Jump[/Keyboard/space]
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: 3bd13a68-c717-4784-818c-d96375951884
-    m_ActionName: Gameplay/Fire[/Mouse/leftButton]
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: 030790b4-bcf2-4c90-96b4-f548fd7ea50f
-    m_ActionName: Gameplay/Pause[/Keyboard/escape]
-  m_NeverAutoSwitchControlSchemes: 0
-  m_DefaultControlScheme: 
-  m_DefaultActionMap: Gameplay
-  m_SplitScreenIndex: -1
-  m_Camera: {fileID: 4882359132843580725}
---- !u!114 &1370545205831854465
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3248062341527016566}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cc68c1f2618ee5046943c76cbdf7ad14, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &7184974801737559453
 GameObject:
   m_ObjectHideFlags: 0

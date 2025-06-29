@@ -1,36 +1,53 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class UIManager : MonoBehaviour
 {
-    public static UIManager instance;
-    public Slider healthBar;
-    public Text killText;
-    public Text timerText;
-    public GameObject endGamePanel;
-    public Text endText;
+    [SerializeField] public TMP_Text messageText;
+    [SerializeField] private float messageDuration = 2f;
+    [SerializeField] public TMP_Text killText;
 
-    void Awake() => instance = this;
-
-    public void UpdateHealth(float hp)
+    private float timer;
+    public static UIManager Instance;
+    void Awake()
     {
-        healthBar.value = hp;
+        Instance = this;
+        if (messageText != null)
+            messageText.gameObject.SetActive(false);
     }
 
-    public void UpdateKills(int k)
+    void Update()
     {
-        killText.text = "Kills: " + k;
+        if (messageText != null && messageText.gameObject.activeSelf)
+        {
+            timer -= Time.deltaTime;
+            if (timer <= 0f)
+                messageText.gameObject.SetActive(false);
+        }
+
+        if (killText.gameObject.activeSelf)
+        {
+            timer -= Time.deltaTime;
+            if (timer <= 0f)
+                killText.gameObject.SetActive(false);
+        }
     }
 
-    public void UpdateTimer(float t)
+    public void ShowMessage(string message)
     {
-        timerText.text = "Time: " + Mathf.Ceil(t);
+        if (messageText == null) return;
+
+        messageText.text = message;
+        messageText.gameObject.SetActive(true);
+        timer = messageDuration;
     }
 
-    public void ShowEndPanel(bool won)
+    public void ShowKillMessage(int kills, int maxKills)
     {
-        endGamePanel.SetActive(true);
-        endText.text = won ? "¡Sobreviviste!" : "¡Te eliminaron!";
+        killText.text = $"Enemigos derrotados: {kills} / {maxKills}";
+        killText.gameObject.SetActive(true);
+        timer = messageDuration;
     }
 }
 

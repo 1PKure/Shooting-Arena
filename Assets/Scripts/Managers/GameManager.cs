@@ -23,8 +23,14 @@ public class GameManager : MonoBehaviour
 
     public static GameManager Instance;
     private bool isGameOver = false;
-    private int victoryScore = 50;
+    [SerializeField] private TMP_Text killText;
     private int killCount = 0;
+    private int killGoal = 200;
+    private bool isGodMode = false;
+    [SerializeField] private UIManager uiManager;
+    //[SerializeField] private GameObject bonusPickupPrefab;
+    //[SerializeField] private Transform bonusSpawnPoint;
+    private bool victoryTriggered = false;
 
 
     void Awake()
@@ -69,7 +75,7 @@ public class GameManager : MonoBehaviour
             GameOver();
         }
 
-        if (score >= victoryScore)
+        if (score >= killGoal)
         {
             Victory();
         }
@@ -81,10 +87,12 @@ public class GameManager : MonoBehaviour
 
         score += points;
         killCount++;
+        if (killText != null)
+            killText.text = $"Enemigos derrotados: {killCount} / {killGoal}";
 
         UpdateScoreUI();
 
-        if (killCount >= victoryScore)
+        if (killCount >= killGoal)
         {
             Victory();
         }
@@ -194,7 +202,27 @@ public class GameManager : MonoBehaviour
     }
 
     public void DeleteSave() => SaveSystem.DeleteSave();
+    public void SetGodMode(bool active)
+    {
+        isGodMode = active;
+    }
+    public void ForceVictory()
+    {
+        if (!victoryTriggered)
+        {
+            victoryTriggered = true;
+            TriggerVictory();
+        }
+    }
+    private void TriggerVictory()
+    {
+        if (victoryPanel != null) victoryPanel.SetActive(true);
+        Time.timeScale = 0f;
+        Cursor.lockState = CursorLockMode.None;
 
+        //if (bonusPickupPrefab != null && bonusSpawnPoint != null)
+            //Instantiate(bonusPickupPrefab, bonusSpawnPoint.position, Quaternion.identity);
+    }
     public void QuitGame()
     {
         Application.Quit();

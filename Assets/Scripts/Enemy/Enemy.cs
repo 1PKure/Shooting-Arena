@@ -26,7 +26,7 @@ public class Enemy : MonoBehaviour
     protected virtual void Die()
     {
         isActive = false;
-
+        FeedbackManager.Instance.PlayDeathFeedback(transform.position);
         if (GameManager.Instance != null)
         {
             GameManager.Instance.AddScore(stats.pointValue);
