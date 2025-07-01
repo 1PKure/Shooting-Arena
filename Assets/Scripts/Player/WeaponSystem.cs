@@ -19,8 +19,8 @@ public class WeaponSystem : MonoBehaviour
         public Transform firePoint;
         public GameObject projectilePrefab;
         public float projectileSpeed;
-        //public AudioClip fireSound;
-        //public ParticleSystem muzzleFlash;
+        public AudioClip fireSound;
+        public ParticleSystem muzzleFlash;
     }
 
     [SerializeField] private Weapon[] weapons;
@@ -120,12 +120,12 @@ public class WeaponSystem : MonoBehaviour
     {
         weapons[currentWeaponIndex].currentAmmo--;
 
-        /*
+        
         if (weapons[currentWeaponIndex].muzzleFlash != null)
         {
             weapons[currentWeaponIndex].muzzleFlash.Play();
         }
-        */
+        
         
         if (weapons[currentWeaponIndex].projectilePrefab != null) 
         {
@@ -148,7 +148,12 @@ public class WeaponSystem : MonoBehaviour
             Enemy enemy = hit.transform.GetComponent<Enemy>();
             if (enemy != null)
             {
+                FeedbackManager.Instance.PlayHitFeedback(hit.point);
                 enemy.TakeDamage(weapons[currentWeaponIndex].damage);
+            }
+            else
+            {
+                FeedbackManager.Instance.PlayMissFeedback(hit.point);
             }
         }
     }

@@ -31,6 +31,9 @@ public class GameManager : MonoBehaviour
     //[SerializeField] private GameObject bonusPickupPrefab;
     //[SerializeField] private Transform bonusSpawnPoint;
     private bool victoryTriggered = false;
+    private bool isTutorialLevel = false;
+    [SerializeField] private GameObject nextLevelMessage;
+    private bool tutorialReadyToAdvance = false;
 
 
     void Awake()
@@ -86,13 +89,15 @@ public class GameManager : MonoBehaviour
         if (isGameOver) return;
 
         score += points;
-        killCount++;
-        if (killText != null)
-            killText.text = $"Enemigos derrotados: {killCount} / {killGoal}";
-
         UpdateScoreUI();
 
-        if (killCount >= killGoal)
+        if (isTutorialLevel && score >= 5)
+        {
+            tutorialReadyToAdvance = true;
+            if (nextLevelMessage != null)
+                nextLevelMessage.SetActive(true);
+        }
+        else if (!isTutorialLevel && score >= killGoal)
         {
             Victory();
         }
@@ -230,5 +235,10 @@ public class GameManager : MonoBehaviour
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
 #endif
+    }
+
+    public bool IsTutorialCompleted()
+    {
+        return tutorialReadyToAdvance;
     }
 }

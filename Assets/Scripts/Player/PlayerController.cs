@@ -80,11 +80,16 @@ public class PlayerController : MonoBehaviour
 
     private void MouseRotation()
     {
-        Vector2 lookInput = input.LookInput * playerData.mouseSensitivity;
-        xRotation -= lookInput.y;
-        xRotation = Mathf.Clamp(xRotation, -80f, 80f);
+        Vector2 lookInput = input.LookInput;
 
-        cameraHolder.transform.localRotation = Quaternion.Euler(mouseY, 0f, 0f);
+        float mouseXInput = lookInput.x * playerData.mouseSensitivity;
+        float mouseYInput = lookInput.y * playerData.mouseSensitivity;
+
+        mouseX += mouseXInput;
+        mouseY -= mouseYInput;
+        mouseY = Mathf.Clamp(mouseY, -80f, 80f);
+
+        cameraHolder.localRotation = Quaternion.Euler(mouseY, 0f, 0f);
         transform.rotation = Quaternion.Euler(0f, mouseX, 0f);
     }
 }

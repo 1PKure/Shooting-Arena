@@ -10,7 +10,6 @@ public class FeedbackManager : MonoBehaviour
     public AudioClip hitSFX;
     public AudioClip missSFX;
     public AudioClip deathSFX;
-    private AudioSource audioSource;
 
     [Header("VFX")]
     public GameObject hitVFX;
@@ -22,24 +21,23 @@ public class FeedbackManager : MonoBehaviour
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
 
-        audioSource = GetComponent<AudioSource>();
     }
 
     public void PlayHitFeedback(Vector3 position)
     {
-        if (hitSFX) audioSource.PlayOneShot(hitSFX);
+        if (hitSFX) AudioManager.Instance.PlaySFX(hitSFX);
         if (hitVFX) Instantiate(hitVFX, position, Quaternion.identity);
     }
 
     public void PlayMissFeedback(Vector3 position)
     {
-        if (missSFX) audioSource.PlayOneShot(missSFX);
+        if (missSFX) AudioManager.Instance.PlaySFX(missSFX);
         if (missVFX) Instantiate(missVFX, position, Quaternion.identity);
     }
 
     public void PlayDeathFeedback(Vector3 position)
     {
-        if (deathSFX) audioSource.PlayOneShot(deathSFX);
+        if (deathSFX) AudioManager.Instance.PlaySFX(deathSFX);
         if (deathVFX) Instantiate(deathVFX, position, Quaternion.identity);
     }
 }

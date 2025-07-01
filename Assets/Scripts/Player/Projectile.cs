@@ -9,7 +9,7 @@ public class Projectile : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Enemy"))
         {
-            FeedbackManager.Instance.PlayHitFeedback(transform.position);
+            //FeedbackManager.Instance.PlayHitFeedback(transform.position);
             Enemy enemy = collision.collider.GetComponent<Enemy>();
             if (enemy != null)
             {
@@ -19,7 +19,7 @@ public class Projectile : MonoBehaviour
         }
         else
         {
-            FeedbackManager.Instance.PlayMissFeedback(transform.position);
+            //FeedbackManager.Instance.PlayMissFeedback(transform.position);
         }
     }
 }
