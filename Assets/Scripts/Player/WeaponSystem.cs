@@ -170,7 +170,7 @@ public class WeaponSystem : MonoBehaviour
 
         Rigidbody rb = projectile.GetComponent<Rigidbody>();
         rb.AddForce(projectile.transform.forward * weapons[currentWeaponIndex].projectileSpeed, ForceMode.Impulse);
-
+        FeedbackManager.Instance.PlayShootFeedback();
         Destroy(projectile, 3f);
     }
 

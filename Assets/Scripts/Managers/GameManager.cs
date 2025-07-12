@@ -28,8 +28,6 @@ public class GameManager : MonoBehaviour
     private int killGoal = 200;
     private bool isGodMode = false;
     [SerializeField] private UIManager uiManager;
-    //[SerializeField] private GameObject bonusPickupPrefab;
-    //[SerializeField] private Transform bonusSpawnPoint;
     private bool victoryTriggered = false;
     private bool isTutorialLevel = false;
     [SerializeField] private GameObject nextLevelMessage;
@@ -137,6 +135,7 @@ public class GameManager : MonoBehaviour
         }
 
         Cursor.lockState = CursorLockMode.None;
+        FeedbackManager.Instance.PlayLoseFeedback();
     }
 
     void Victory()
@@ -145,6 +144,7 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 0f;
         if (victoryPanel != null) victoryPanel.SetActive(true);
         Cursor.lockState = CursorLockMode.None;
+        FeedbackManager.Instance.PlayWinFeedback();
     }
 
     public void RestartGame()
@@ -224,17 +224,6 @@ public class GameManager : MonoBehaviour
         if (victoryPanel != null) victoryPanel.SetActive(true);
         Time.timeScale = 0f;
         Cursor.lockState = CursorLockMode.None;
-
-        //if (bonusPickupPrefab != null && bonusSpawnPoint != null)
-            //Instantiate(bonusPickupPrefab, bonusSpawnPoint.position, Quaternion.identity);
-    }
-    public void QuitGame()
-    {
-        Application.Quit();
-
-#if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
-#endif
     }
 
     public bool IsTutorialCompleted()

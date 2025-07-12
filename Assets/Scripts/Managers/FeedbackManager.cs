@@ -10,6 +10,10 @@ public class FeedbackManager : MonoBehaviour
     public AudioClip hitSFX;
     public AudioClip missSFX;
     public AudioClip deathSFX;
+    public AudioClip jumpSFX;
+    public AudioClip winSFX;
+    public AudioClip loseSFX;
+    public AudioClip shootSFX;
 
     [Header("VFX")]
     public GameObject hitVFX;
@@ -39,6 +43,26 @@ public class FeedbackManager : MonoBehaviour
     {
         if (deathSFX) AudioManager.Instance.PlaySFX(deathSFX);
         if (deathVFX) Instantiate(deathVFX, position, Quaternion.identity);
+    }
+
+    public void PlayJumpFeedback(Vector3 position)
+    {
+        if (jumpSFX) AudioManager.Instance.PlaySFX(jumpSFX);
+    }
+
+    public void PlayWinFeedback()
+    {
+        if (winSFX) AudioManager.Instance.PlaySFX(winSFX);
+    }
+
+    public void PlayLoseFeedback()
+    {
+        if (loseSFX) AudioManager.Instance.PlaySFX(loseSFX);
+    }
+
+    public void PlayShootFeedback()
+    {
+        if (shootSFX) AudioManager.Instance.PlaySFX(shootSFX);
     }
 }
 
