@@ -71,15 +71,9 @@ public class GameManager : MonoBehaviour
 
         remainingTime -= Time.deltaTime;
         UpdateTimeUI();
-        if (remainingTime <= 0)
-        {
-            GameOver();
-        }
 
-        if (score >= killGoal)
-        {
-            Victory();
-        }
+        if (remainingTime <= 0)
+            GameOver();
     }
 
     public void AddScore(int points)
@@ -105,7 +99,7 @@ public class GameManager : MonoBehaviour
     {
         if (scoreText != null)
         {
-            scoreText.text = "Puntos: " + score.ToString();
+            scoreText.text = "Score: " + score.ToString();
         }
     }
 
@@ -115,36 +109,20 @@ public class GameManager : MonoBehaviour
         {
             int minutes = Mathf.FloorToInt(remainingTime / 60);
             int seconds = Mathf.FloorToInt(remainingTime % 60);
-            timeText.text = string.Format("Tiempo: {0:00}:{1:00}", minutes, seconds);
+            timeText.text = string.Format("Time: {0:00}:{1:00}", minutes, seconds);
         }
     }
 
     public void GameOver()
     {
-        isGameOver = true;
-        Time.timeScale = 0f;
+        if (isGameOver) return;
 
-        if (gameOverPanel != null)
-        {
-            gameOverPanel.SetActive(true);
+        SetGameEndState(true, gameOverPanel);
 
-            if (finalScoreText != null)
-            {
-                finalScoreText.text = "Puntuación final: " + score.ToString();
-            }
-        }
+        if (finalScoreText != null)
+            finalScoreText.text = "Final Score: " + score.ToString();
 
-        Cursor.lockState = CursorLockMode.None;
         FeedbackManager.Instance.PlayLoseFeedback();
-    }
-
-    void Victory()
-    {
-        isGameOver = true;
-        Time.timeScale = 0f;
-        if (victoryPanel != null) victoryPanel.SetActive(true);
-        Cursor.lockState = CursorLockMode.None;
-        FeedbackManager.Instance.PlayWinFeedback();
     }
 
     public void RestartGame()
@@ -211,20 +189,30 @@ public class GameManager : MonoBehaviour
     {
         isGodMode = active;
     }
-    public void ForceVictory()
+
+    private void HandleVictory()
     {
-        if (!victoryTriggered)
-        {
-            victoryTriggered = true;
-            TriggerVictory();
-        }
+        if (victoryTriggered || isGameOver) return;
+
+        victoryTriggered = true;
+        SetGameEndState(true, victoryPanel);
+        FeedbackManager.Instance.PlayWinFeedback();
     }
-    private void TriggerVictory()
+    private void SetGameEndState(bool showPanel, GameObject panel)
     {
-        if (victoryPanel != null) victoryPanel.SetActive(true);
+        isGameOver = true;
         Time.timeScale = 0f;
+
+        if (panel != null) panel.SetActive(showPanel);
+
         Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
+        var player = FindObjectOfType<PlayerController>();
+        if (player != null) player.enabled = false;
     }
+    public void ForceVictory() => HandleVictory();
+    private void Victory() => HandleVictory();
 
     public bool IsTutorialCompleted()
     {
