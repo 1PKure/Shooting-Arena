@@ -13,9 +13,11 @@ public class EnemySpawner : MonoBehaviour
     private List<GameObject> activeEnemies = new List<GameObject>();
     private float nextSpawnTime = 0f;
     private Difficulty currentDifficulty;
+    private bool allowSpawn = true;
 
     void Update()
     {
+        if (!allowSpawn) return;
         if (activeEnemies.Count < maxEnemies && Time.time >= nextSpawnTime)
         {
             SpawnEnemy();
@@ -25,6 +27,10 @@ public class EnemySpawner : MonoBehaviour
         activeEnemies.RemoveAll(e => e == null || !e.activeInHierarchy);
     }
 
+    public void StopSpawning()
+    {
+        allowSpawn = false;
+    }
     void SpawnEnemy()
     {
         Transform spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Count)];

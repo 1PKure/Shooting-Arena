@@ -6025,9 +6025,8 @@ MonoBehaviour:
   finalScoreText: {fileID: 1409000167}
   gameTime: 180
   timeText: {fileID: 1446604800}
-  killText: {fileID: 127493693}
   uiManager: {fileID: 772867622}
-  nextLevelMessage: {fileID: 1440693887}
+  nextLevel: {fileID: 1440693887}
 --- !u!1 &1200783354
 GameObject:
   m_ObjectHideFlags: 0

@@ -28,7 +28,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private UIManager uiManager;
     private bool victoryTriggered = false;
     private bool isTutorialLevel = false;
-
+    private bool tutorialReadyToAdvance;
+    [SerializeField] private GameObject nextLevel;
 
     void Awake()
     {
@@ -46,12 +47,17 @@ public class GameManager : MonoBehaviour
     {
         Time.timeScale = 1f;
         isGameOver = false;
-        score = 0;
         remainingTime = gameTime;
-        int storedDiff = PlayerPrefs.GetInt("SelectedDifficulty", 1);
-        currentDifficulty = (Difficulty)storedDiff;
+        score = 0;
 
-        spawner.SetDifficulty(currentDifficulty);
+        isTutorialLevel = SceneManager.GetActiveScene().name == "Training";
+
+        if (!isTutorialLevel)
+        {
+            int storedDiff = PlayerPrefs.GetInt("SelectedDifficulty", 1);
+            currentDifficulty = (Difficulty)storedDiff;
+            if (spawner != null) spawner.SetDifficulty(currentDifficulty);
+        }
 
         if (gameOverPanel != null)
         {
@@ -65,15 +71,28 @@ public class GameManager : MonoBehaviour
     {
         if (isGameOver) return;
 
-        remainingTime -= Time.deltaTime;
-        UpdateTimeUI();
+        if (!isTutorialLevel)
+        {
+            remainingTime -= Time.deltaTime;
+            UpdateTimeUI();
 
-        if (remainingTime <= 0)
-            GameOver();
+            if (remainingTime <= 0)
+                GameOver();
+        }
+        else
+        {
+            if (Input.GetKeyDown(KeyCode.T) && !tutorialReadyToAdvance)
+            {
+                tutorialReadyToAdvance = true;
+                if (spawner != null) spawner.StopSpawning();
+                if (nextLevel != null) nextLevel.SetActive(true);
+            }
+        }
     }
 
     public void AddScore(int points)
     {
+        if (isTutorialLevel) return;
         if (isGameOver) return;
 
         score += points;
@@ -199,4 +218,14 @@ public class GameManager : MonoBehaviour
     }
     public void ForceVictory() => HandleVictory();
     private void Victory() => HandleVictory();
+
+    public bool IsTutorialLevel()
+    {
+        return isTutorialLevel;
+    }
+
+    public bool IsTutorialCompleted()
+    {
+        return tutorialReadyToAdvance;
+    }
 }
