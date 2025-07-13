@@ -7270,7 +7270,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Camin\xE1 hacia la pared para salir del tutorial cuando quieras"
+  m_text: "Cuando termines, presion\xE1 T y avanza a la pared para salir del tutorial"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 0b790d82b74448e47a04cd5223c86c9b, type: 2}
   m_sharedMaterial: {fileID: -6844589285826604553, guid: 0b790d82b74448e47a04cd5223c86c9b, type: 2}
