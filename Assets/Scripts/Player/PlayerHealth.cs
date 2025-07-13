@@ -18,6 +18,7 @@ public class PlayerHealth : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
+        if (GameManager.Instance.IsGodMode()) return;
         currentHealth -= damage;
 
         currentHealth = Mathf.Max(currentHealth, 0);

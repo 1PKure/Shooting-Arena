@@ -14,5 +14,23 @@ public class SaveMenu : MonoBehaviour
         loadButton.onClick.AddListener(() => GameManager.Instance.LoadGame());
         deleteButton.onClick.AddListener(() => GameManager.Instance.DeleteSave());
     }
+
+    public void Save()
+    {
+        Debug.Log("Guardando partida...");
+        GameManager.Instance.SaveGame();
+    }
+
+    public void Load()
+    {
+        Debug.Log("Cargando partida...");
+        GameManager.Instance.LoadGame();
+    }
+
+    public void Delete()
+    {
+        Debug.Log("Borrando partida...");
+        GameManager.Instance.DeleteSave();
+    }
 }
 

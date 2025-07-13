@@ -23,15 +23,11 @@ public class GameManager : MonoBehaviour
 
     public static GameManager Instance;
     private bool isGameOver = false;
-    [SerializeField] private TMP_Text killText;
-    private int killCount = 0;
     private int killGoal = 200;
     private bool isGodMode = false;
     [SerializeField] private UIManager uiManager;
     private bool victoryTriggered = false;
     private bool isTutorialLevel = false;
-    [SerializeField] private GameObject nextLevelMessage;
-    private bool tutorialReadyToAdvance = false;
 
 
     void Awake()
@@ -82,14 +78,7 @@ public class GameManager : MonoBehaviour
 
         score += points;
         UpdateScoreUI();
-
-        if (isTutorialLevel && score >= 5)
-        {
-            tutorialReadyToAdvance = true;
-            if (nextLevelMessage != null)
-                nextLevelMessage.SetActive(true);
-        }
-        else if (!isTutorialLevel && score >= killGoal)
+        if (!isTutorialLevel && score >= killGoal)
         {
             Victory();
         }
@@ -185,10 +174,7 @@ public class GameManager : MonoBehaviour
     }
 
     public void DeleteSave() => SaveSystem.DeleteSave();
-    public void SetGodMode(bool active)
-    {
-        isGodMode = active;
-    }
+    public bool IsGodMode() => isGodMode;
 
     private void HandleVictory()
     {
@@ -213,9 +199,4 @@ public class GameManager : MonoBehaviour
     }
     public void ForceVictory() => HandleVictory();
     private void Victory() => HandleVictory();
-
-    public bool IsTutorialCompleted()
-    {
-        return tutorialReadyToAdvance;
-    }
 }

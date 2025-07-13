@@ -21,7 +21,7 @@ public class CheatManager : MonoBehaviour
         if (Input.GetKeyDown(cheatGodMode))
         {
             godModeActive = !godModeActive;
-            GameManager.Instance.SetGodMode(godModeActive);
+            GameManager.Instance.IsGodMode();
             UIManager.Instance.ShowMessage("GOD MODE: " + (godModeActive ? "ACTIVADO" : "DESACTIVADO"));
         }
     }

@@ -5,14 +5,23 @@ using UnityEngine.SceneManagement;
 
 public class NextLevelTrigger : MonoBehaviour
 {
-    [SerializeField] private string nextSceneName = "GameplayScene";
-
+    public GameObject exitMessage;
+    void Start()
+    {
+        exitMessage.SetActive(true);
+        Invoke(nameof(HideExitMessage), 5f);
+    }
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player") && GameManager.Instance != null && GameManager.Instance.IsTutorialCompleted())
+        if (other.CompareTag("Player"))
         {
-            SceneManager.LoadScene(nextSceneName);
+            SceneManager.LoadScene("Gameplay");
         }
+    }
+
+    void HideExitMessage()
+    {
+        exitMessage.SetActive(false);
     }
 }
 

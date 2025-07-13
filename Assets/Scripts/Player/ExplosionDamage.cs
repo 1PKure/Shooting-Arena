@@ -11,12 +11,11 @@ public class ExplosionDamage : MonoBehaviour
 
     void Start()
     {
-        if (explosionEffect)
-            Instantiate(explosionEffect, transform.position, Quaternion.identity);
-
         Collider[] hitColliders = Physics.OverlapSphere(transform.position, explosionRadius, enemyLayer);
         foreach (var hit in hitColliders)
         {
+            if (explosionEffect)
+                Instantiate(explosionEffect, transform.position, Quaternion.identity);
             Enemy enemy = hit.GetComponent<Enemy>();
             if (enemy != null)
                 enemy.TakeDamage(explosionDamage);

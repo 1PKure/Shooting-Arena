@@ -21,25 +21,22 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float groundDistance = 0.4f;
     [SerializeField] private LayerMask groundMask;
     private PlayerInputReader input;
+    private float godSpeedMultiplier = 2f;
+    private float effectiveSpeed;
 
 
     void Start()
     {
+        effectiveSpeed = playerData.moveSpeed;
         input = GetComponent<PlayerInputReader>();
         controller = GetComponent<CharacterController>();
         animator = GetComponent<Animator>();
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
+        SetSpawnPointByScene();
         ResetPlayer();
         UpdateActiveCamera();
-    }
-
-    public void ResetPlayer()
-    {
-        transform.position = playerData.spawnPosition;
-        currentHealth = playerData.maxHealth;
-        xRotation = 0f;
     }
 
     void Update()
@@ -49,31 +46,53 @@ public class PlayerController : MonoBehaviour
         UpdateActiveCamera();
         MouseRotation();
     }
+    public void ResetPlayer()
+    {
+        transform.position = playerData.spawnPosition;
+        currentHealth = playerData.maxHealth;
+        xRotation = 0f;
+    }
+    void SetSpawnPointByScene()
+    {
+        string sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
 
+        if (sceneName == "Training")
+            playerData.spawnPosition = new Vector3(-63f, 25f, -132f);
+        else
+            playerData.spawnPosition = new Vector3(0f, 1.2f, -5f);
+    }
     void HandleMovement()
     {
         isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
-        if (isGrounded && velocity.y < 0)
-        {
-            velocity.y = -2f;
-        }
 
+        if (isGrounded && velocity.y < 0)
+            velocity.y = -2f;
 
         Vector2 moveInput = input.MoveInput;
         Vector3 move = transform.right * moveInput.x + transform.forward * moveInput.y;
-        move *= playerData.moveSpeed * Time.deltaTime;
+
+        float currentSpeed = playerData.moveSpeed;
+        if (GameManager.Instance.IsGodMode())
+            currentSpeed *= godSpeedMultiplier;
+
+        move *= currentSpeed;
 
         velocity.y += gravity * Time.deltaTime;
-        if (Input.GetButtonDown("Jump") && isGrounded)
+
+
+        if (input.JumpPressed)
         {
-            velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
-            FeedbackManager.Instance.PlayJumpFeedback(transform.position);
-        } 
+            if (GameManager.Instance.IsGodMode() || isGrounded)
+            {
+                velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
+                FeedbackManager.Instance.PlayJumpFeedback(transform.position);
+            }
+        }
 
-
-        controller.Move(velocity * Time.deltaTime);
-        controller.Move(move);
+        Vector3 movement = move * Time.deltaTime + velocity;
+        controller.Move(movement);
     }
+
 
     private void UpdateActiveCamera()
     {

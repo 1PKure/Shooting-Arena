@@ -105,6 +105,7 @@ GameObject:
   - component: {fileID: 7933657536823242416}
   - component: {fileID: 4509839212995484826}
   - component: {fileID: 5381263552071112525}
+  - component: {fileID: 4405700899070429625}
   m_Layer: 0
   m_Name: Character
   m_TagString: Player
@@ -236,6 +237,18 @@ MonoBehaviour:
   enemyLayer:
     serializedVersion: 2
     m_Bits: 128
+--- !u!114 &4405700899070429625
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3248062341527016566}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4132287b62a0b3f49a04531a8fedbbec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7184974801737559453
 GameObject:
   m_ObjectHideFlags: 0
@@ -458,6 +471,16 @@ PrefabInstance:
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: 440e87d46374652499fa87290045ea93, type: 2}
+    - target: {fileID: 948568814469146419, guid: cf3fcdcd18b83ac49bd06600077d0b58, type: 3}
+      propertyPath: m_WarningMessage
+      value: "\nBinding warning: Some generic clip(s) animate transforms that are
+        already bound by a Humanoid avatar. These transforms can only be changed
+        by Humanoid clips.\n\tTransform 'Root'\n\tTransform 'IndexFinger_02'\n\tTransform
+        'Elbow_R'\n\tTransform 'Finger_02'\n\tTransform 'Finger_03'\n\tTransform
+        'Ball_L'\n\tTransform 'Thumb_02'\n\tTransform 'Ball_R'\n\tTransform 'Clavicle_L'\n\tTransform
+        'Finger_01'\n\tand more ...\n\tFrom animation clip 'mixamo.com'\n\tFrom animation
+        clip 'mixamo.com'"
+      objectReference: {fileID: 0}
     - target: {fileID: 4091681816463056079, guid: cf3fcdcd18b83ac49bd06600077d0b58, type: 3}
       propertyPath: m_LocalScale.x
       value: 0.8

@@ -19,8 +19,6 @@ public class WeaponSystem : MonoBehaviour
         public Transform firePoint;
         public GameObject projectilePrefab;
         public float projectileSpeed;
-        public AudioClip fireSound;
-        public ParticleSystem muzzleFlash;
     }
 
     [SerializeField] private Weapon[] weapons;
@@ -36,7 +34,7 @@ public class WeaponSystem : MonoBehaviour
 
     void Start()
     {
-        
+
         for (int i = 0; i < weapons.Length; i++)
         {
             weapons[i].model.SetActive(i == currentWeaponIndex);
@@ -55,24 +53,17 @@ public class WeaponSystem : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Alpha2) && weapons.Length > 1) EquipWeapon(1);
 
 
-        if (weapons[currentWeaponIndex].isAutomatic)
+        bool shouldShoot = weapons[currentWeaponIndex].isAutomatic
+            ? Input.GetButton("Fire1")
+    :       Input.GetButtonDown("Fire1");
+
+        if (shouldShoot && Time.time >= nextTimeToFire && weapons[currentWeaponIndex].currentAmmo > 0)
         {
-            if (Input.GetButton("Fire1") && Time.time >= nextTimeToFire && weapons[currentWeaponIndex].currentAmmo > 0)
-            {
-                nextTimeToFire = Time.time + 1f / weapons[currentWeaponIndex].fireRate;
-                Shoot();
-            }
-        }
-        else
-        {
-            if (Input.GetButtonDown("Fire1") && Time.time >= nextTimeToFire && weapons[currentWeaponIndex].currentAmmo > 0)
-            {
-                nextTimeToFire = Time.time + 1f / weapons[currentWeaponIndex].fireRate;
-                Shoot();
-            }
+            nextTimeToFire = Time.time + 1f / weapons[currentWeaponIndex].fireRate;
+            Shoot();
         }
 
-        
+
         if (Input.GetKeyDown(KeyCode.R))
         {
             Reload();
@@ -120,18 +111,12 @@ public class WeaponSystem : MonoBehaviour
     {
         weapons[currentWeaponIndex].currentAmmo--;
 
-        
-        if (weapons[currentWeaponIndex].muzzleFlash != null)
-        {
-            weapons[currentWeaponIndex].muzzleFlash.Play();
-        }
-        
-        
-        if (weapons[currentWeaponIndex].projectilePrefab != null) 
+
+        if (weapons[currentWeaponIndex].projectilePrefab != null)
         {
             ShootProjectile();
         }
-        else 
+        else
         {
             ShootRaycast();
         }
@@ -144,7 +129,7 @@ public class WeaponSystem : MonoBehaviour
         {
             Debug.Log("Hit: " + hit.transform.name);
 
-            
+
             Enemy enemy = hit.transform.GetComponent<Enemy>();
             if (enemy != null)
             {

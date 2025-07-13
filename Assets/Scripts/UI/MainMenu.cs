@@ -3,15 +3,7 @@ using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
-    public void StartGameEasy() => StartGameWithDifficulty(GameManager.Difficulty.Easy);
-    public void StartGameNormal() => StartGameWithDifficulty(GameManager.Difficulty.Medium);
-    public void StartGameHard() => StartGameWithDifficulty(GameManager.Difficulty.Hard);
-
-    void StartGameWithDifficulty(GameManager.Difficulty diff)
-    {
-        PlayerPrefs.SetInt("SelectedDifficulty", (int)diff);
-        SceneManager.LoadScene("Gameplay");
-    }
+    public GameObject tutorialPopup;
 
     private void Awake()
     {
@@ -19,6 +11,22 @@ public class MainMenu : MonoBehaviour
         Cursor.visible = true;
 
     }
+
+    public void OnDifficultySelected(int difficulty)
+    {
+        PlayerPrefs.SetInt("SelectedDifficulty", difficulty);
+        tutorialPopup.SetActive(true);
+    }
+
+    public void OnTutorialResponse(bool doTutorial)
+    {
+        tutorialPopup.SetActive(false);
+        if (doTutorial)
+            SceneManager.LoadScene("Training");
+        else
+            SceneManager.LoadScene("Gameplay");
+    }
+
 
     public void QuitGame()
     {
