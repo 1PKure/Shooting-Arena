@@ -1,6 +1,4 @@
 using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 
 public class WeaponSystem : MonoBehaviour
@@ -29,88 +27,74 @@ public class WeaponSystem : MonoBehaviour
     [SerializeField] private LayerMask enemyLayer;
 
     private float nextTimeToFire = 0f;
-    private bool isFiring = false;
-    private int damage = 50;
 
     void Start()
     {
-
         for (int i = 0; i < weapons.Length; i++)
         {
             weapons[i].model.SetActive(i == currentWeaponIndex);
         }
+        NotifyUI();
     }
 
-    void Update()
+    public void TryShoot()
     {
-        UpdateUI();
-        if (Input.GetKeyDown(KeyCode.Q))
-        {
-            SwitchWeapon();
-        }
-
-        if (Input.GetKeyDown(KeyCode.Alpha1)) EquipWeapon(0);
-        if (Input.GetKeyDown(KeyCode.Alpha2) && weapons.Length > 1) EquipWeapon(1);
-
-
-        bool shouldShoot = weapons[currentWeaponIndex].isAutomatic
-            ? Input.GetButton("Fire1")
-    :       Input.GetButtonDown("Fire1");
-
-        if (shouldShoot && Time.time >= nextTimeToFire && weapons[currentWeaponIndex].currentAmmo > 0)
+        if (Time.time >= nextTimeToFire && weapons[currentWeaponIndex].currentAmmo > 0)
         {
             nextTimeToFire = Time.time + 1f / weapons[currentWeaponIndex].fireRate;
             Shoot();
-        }
-
-
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            Reload();
+            NotifyUI();
         }
     }
-    void UpdateUI()
-    {
-        if (ammoText != null)
-            ammoText.text = "Bullets: " + weapons[currentWeaponIndex].currentAmmo;
-
-        if (reloadHintText != null)
-            reloadHintText.gameObject.SetActive(weapons[currentWeaponIndex].currentAmmo == 0);
-    }
-    void EquipWeapon(int index)
-    {
-        if (index == currentWeaponIndex) return;
-
-        foreach (var weapon in weapons)
-        {
-            weapon.model.SetActive(false);
-        }
-
-        currentWeaponIndex = index;
-
-        weapons[currentWeaponIndex].model.SetActive(true);
-    }
-
-
-    void SwitchWeapon()
+    public void SwitchWeapon()
     {
         foreach (var weapon in weapons)
-        {
             weapon.model.SetActive(false);
-        }
 
         currentWeaponIndex = (currentWeaponIndex + 1) % weapons.Length;
 
         weapons[currentWeaponIndex].model.SetActive(true);
 
-        Debug.Log("Switched to: " + weapons[currentWeaponIndex].name);
+        NotifyUI();
     }
 
+    public void NotifyUI()
+    {
+        if (UIManager.Instance != null)
+        {
+            UIManager.Instance.UpdateAmmo(
+                weapons[currentWeaponIndex].currentAmmo,
+                weapons[currentWeaponIndex].maxAmmo
+            );
+        }
+    }
+    public void Reload()
+    {
+        weapons[currentWeaponIndex].currentAmmo = weapons[currentWeaponIndex].maxAmmo;
+        NotifyUI();
+    }
 
-    void Shoot()
+    public void EquipWeapon(int index)
+    {
+        if (index == currentWeaponIndex || index >= weapons.Length) return;
+
+        foreach (var weapon in weapons)
+            weapon.model.SetActive(false);
+
+        currentWeaponIndex = index;
+        weapons[currentWeaponIndex].model.SetActive(true);
+
+        NotifyUI();
+    }
+
+    public bool IsCurrentWeaponAutomatic()
+    {
+        return weapons[currentWeaponIndex].isAutomatic;
+    }
+
+    private void Shoot()
     {
         weapons[currentWeaponIndex].currentAmmo--;
-
 
         if (weapons[currentWeaponIndex].projectilePrefab != null)
         {
@@ -127,14 +111,15 @@ public class WeaponSystem : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast(playerCamera.transform.position, playerCamera.transform.forward, out hit, weapons[currentWeaponIndex].range, enemyLayer))
         {
-            Debug.Log("Hit: " + hit.transform.name);
-
-
             Enemy enemy = hit.transform.GetComponent<Enemy>();
             if (enemy != null)
             {
                 FeedbackManager.Instance.PlayHitFeedback(hit.point);
-                enemy.TakeDamage(weapons[currentWeaponIndex].damage);
+                IDamageable target = hit.transform.GetComponent<IDamageable>();
+                if (target != null)
+                {
+                    target.TakeDamage(weapons[currentWeaponIndex].damage);
+                }
             }
             else
             {
@@ -145,23 +130,24 @@ public class WeaponSystem : MonoBehaviour
 
     void ShootProjectile()
     {
-        GameObject projectile = Instantiate(
+        GameObject projectileGO = Instantiate(
             weapons[currentWeaponIndex].projectilePrefab,
             weapons[currentWeaponIndex].firePoint.position,
             weapons[currentWeaponIndex].firePoint.rotation
         );
 
-        projectile.transform.forward = playerCamera.transform.forward;
+        projectileGO.transform.forward = playerCamera.transform.forward;
+        Projectile projectile = projectileGO.GetComponent<Projectile>();
+        if (projectile != null)
+        {
+            projectile.SetDamage(weapons[currentWeaponIndex].damage);
+        }
 
-        Rigidbody rb = projectile.GetComponent<Rigidbody>();
-        rb.AddForce(projectile.transform.forward * weapons[currentWeaponIndex].projectileSpeed, ForceMode.Impulse);
+        Rigidbody rb = projectileGO.GetComponent<Rigidbody>();
+        rb.AddForce(projectileGO.transform.forward * weapons[currentWeaponIndex].projectileSpeed, ForceMode.Impulse);
+
         FeedbackManager.Instance.PlayShootFeedback();
-        Destroy(projectile, 3f);
-    }
-
-    void Reload()
-    {
-        weapons[currentWeaponIndex].currentAmmo = weapons[currentWeaponIndex].maxAmmo;
+        Destroy(projectileGO, 3f);
     }
 
     public void ResetWeapons()
@@ -172,7 +158,6 @@ public class WeaponSystem : MonoBehaviour
             weapons[i].model.SetActive(i == 0);
         }
         currentWeaponIndex = 0;
+        NotifyUI();
     }
-
-
 }

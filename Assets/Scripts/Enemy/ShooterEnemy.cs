@@ -19,7 +19,7 @@ public class ShooterEnemy : Enemy
 
     void Update()
     {
-        if (!isActive) return;
+        //if (!isActive) return;
 
         
         if (player != null && Vector3.Distance(transform.position, player.position) <= detectionRange)

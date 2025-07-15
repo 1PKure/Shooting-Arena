@@ -1,37 +1,29 @@
 using UnityEngine;
 
-public class Enemy : MonoBehaviour
+public class Enemy : MonoBehaviour, IDamageable
 {
     [SerializeField] private EnemyStatsData stats;
-    protected int currentHealth;
-    protected bool isActive = true;
 
     protected virtual void Start()
     {
-        currentHealth = stats.maxHealth;
-    }
-
-    public virtual void TakeDamage(int amount)
-    {
-        if (!isActive) return;
-
-        currentHealth -= amount;
-
-        if (currentHealth <= 0)
+        var health = GetComponent<Health>();
+        if (health != null)
         {
-            Die();
+            health.Heal(stats.maxHealth);
         }
     }
 
-    protected virtual void Die()
+    void IDamageable.TakeDamage(int amount)
     {
-        isActive = false;
-        FeedbackManager.Instance.PlayDeathFeedback(transform.position);
-        if (GameManager.Instance != null)
+        var health = GetComponent<Health>();
+        if (health != null)
         {
-            GameManager.Instance.AddScore(stats.pointValue);
+            health.TakeDamage(amount);
+            if (!health.IsAlive)
+            {
+                health.Die();
+            }
         }
-
-        Destroy(gameObject);
     }
+
 }

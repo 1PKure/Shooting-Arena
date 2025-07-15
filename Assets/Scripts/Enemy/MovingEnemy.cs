@@ -17,7 +17,7 @@ public class MovingEnemy : Enemy
 
     void Update()
     {
-        if (!isActive) return;
+        //if (!isActive) return;
 
        
         if (movingRight)

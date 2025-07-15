@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 2884364655671096230}
   - component: {fileID: -8611593433905314754}
   - component: {fileID: 3367751647145765677}
+  - component: {fileID: 5692750131307424839}
   m_Layer: 7
   m_Name: MovingEnemy
   m_TagString: Enemy
@@ -86,6 +87,21 @@ MonoBehaviour:
   stats: {fileID: 11400000, guid: 0a4258de8af93014fa550045efe063aa, type: 2}
   moveSpeed: 3
   moveDistance: 5
+--- !u!114 &5692750131307424839
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 923602710930002107}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6dbc35de079ecf14a8d5424134210342, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 100
+  isPlayer: 0
+  scoreOnDeath: 50
 --- !u!1001 &8601857311294435455
 PrefabInstance:
   m_ObjectHideFlags: 0

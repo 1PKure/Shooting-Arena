@@ -1,10 +1,14 @@
 using UnityEngine;
+using UnityEngine.InputSystem.HID;
 
 public class Projectile : MonoBehaviour
 {
     public int damage = 50;
     public LayerMask enemyLayer;
-
+    public void SetDamage(int dmg)
+    {
+        damage = dmg;
+    }
     void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.CompareTag("Enemy"))
@@ -13,7 +17,11 @@ public class Projectile : MonoBehaviour
             Enemy enemy = collision.collider.GetComponent<Enemy>();
             if (enemy != null)
             {
-                enemy.TakeDamage(damage);
+                IDamageable target = collision.transform.GetComponent<IDamageable>();
+                if (target != null)
+                {
+                    target.TakeDamage(damage);
+                }
                 Destroy(gameObject);
             }
         }

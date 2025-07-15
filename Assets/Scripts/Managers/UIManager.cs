@@ -4,32 +4,48 @@ using TMPro;
 
 public class UIManager : MonoBehaviour
 {
-    [SerializeField] public TMP_Text messageText;
-    [SerializeField] private float messageDuration = 2f;
-    [SerializeField] public TMP_Text killText;
-
-    private float timer;
     public static UIManager Instance;
+
+    [Header("Mensajes")]
+    [SerializeField] private TMP_Text messageText;
+    [SerializeField] private TMP_Text killText;
+    [SerializeField] private float messageDuration = 2f;
+
+    [Header("UI Gameplay")]
+    [SerializeField] private TMP_Text ammoText;
+    [SerializeField] private TMP_Text reloadHintText;
+    [SerializeField] private Slider healthBar;
+
+    private float messageTimer;
+    private float killTextTimer;
+
     void Awake()
     {
-        Instance = this;
+        if (Instance == null)
+            Instance = this;
+        else
+            Destroy(gameObject);
+
         if (messageText != null)
             messageText.gameObject.SetActive(false);
+
+        if (killText != null)
+            killText.gameObject.SetActive(false);
     }
 
     void Update()
     {
         if (messageText != null && messageText.gameObject.activeSelf)
         {
-            timer -= Time.deltaTime;
-            if (timer <= 0f)
+            messageTimer -= Time.deltaTime;
+            if (messageTimer <= 0f)
                 messageText.gameObject.SetActive(false);
         }
 
-        if (killText.gameObject.activeSelf)
+        if (killText != null && killText.gameObject.activeSelf)
         {
-            timer -= Time.deltaTime;
-            if (timer <= 0f)
+            killTextTimer -= Time.deltaTime;
+            if (killTextTimer <= 0f)
                 killText.gameObject.SetActive(false);
         }
     }
@@ -40,14 +56,30 @@ public class UIManager : MonoBehaviour
 
         messageText.text = message;
         messageText.gameObject.SetActive(true);
-        timer = messageDuration;
+        messageTimer = messageDuration;
     }
 
     public void ShowKillMessage(int kills, int maxKills)
     {
-        killText.text = $"Enemigos derrotados: {kills} / {maxKills}";
+        if (killText == null) return;
+
+        killText.text = $"Enemies killed: {kills} / {maxKills}";
         killText.gameObject.SetActive(true);
-        timer = messageDuration;
+        killTextTimer = messageDuration;
+    }
+
+    public void UpdateAmmo(int currentAmmo, int maxAmmo)
+    {
+        if (ammoText != null)
+            ammoText.text = $"Bullets: {currentAmmo}";
+
+        if (reloadHintText != null)
+            reloadHintText.gameObject.SetActive(currentAmmo == 0);
+    }
+
+    public void UpdateHealth(int current, int max)
+    {
+        if (healthBar != null)
+            healthBar.value = (float)current / max;
     }
 }
-

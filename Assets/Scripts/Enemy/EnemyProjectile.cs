@@ -9,7 +9,7 @@ public class EnemyProjectile : MonoBehaviour
         if (collision.gameObject.CompareTag("Player"))
         {
             
-            PlayerHealth playerHealth = collision.gameObject.GetComponent<PlayerHealth>();
+            Health playerHealth = collision.gameObject.GetComponent<Health>();
             if (playerHealth != null)
             {
                 playerHealth.TakeDamage(damage);

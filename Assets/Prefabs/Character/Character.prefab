@@ -102,10 +102,10 @@ GameObject:
   m_Component:
   - component: {fileID: 5429257504562071690}
   - component: {fileID: 3432807175270667542}
-  - component: {fileID: 7933657536823242416}
   - component: {fileID: 4509839212995484826}
   - component: {fileID: 5381263552071112525}
   - component: {fileID: 4405700899070429625}
+  - component: {fileID: 7981967981301962011}
   m_Layer: 0
   m_Name: Character
   m_TagString: Player
@@ -153,22 +153,6 @@ MonoBehaviour:
   groundMask:
     serializedVersion: 2
     m_Bits: 256
---- !u!114 &7933657536823242416
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3248062341527016566}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 36b38c3460c774a44be0bb86a70c2167, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxHealth: 100
-  currentHealth: 100
-  healthBar: {fileID: 0}
-  healthText: {fileID: 0}
 --- !u!143 &4509839212995484826
 CharacterController:
   m_ObjectHideFlags: 0
@@ -211,14 +195,14 @@ MonoBehaviour:
   - name: Rifle
     model: {fileID: 4662108993736336128}
     damage: 35
-    fireRate: 1.5
+    fireRate: 3
     maxAmmo: 50
-    currentAmmo: 20
-    isAutomatic: 0
+    currentAmmo: 30
+    isAutomatic: 1
     range: 5
     firePoint: {fileID: 1731268272818346816}
     projectilePrefab: {fileID: 1878670205805360, guid: 9643aebe3b164bc4cae610a164fe007a, type: 3}
-    projectileSpeed: 15
+    projectileSpeed: 20
   - name: Rocket
     model: {fileID: 7571591420767182991}
     damage: 50
@@ -249,6 +233,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4132287b62a0b3f49a04531a8fedbbec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &7981967981301962011
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3248062341527016566}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6dbc35de079ecf14a8d5424134210342, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 100
+  isPlayer: 1
+  scoreOnDeath: 1
 --- !u!1 &7184974801737559453
 GameObject:
   m_ObjectHideFlags: 0

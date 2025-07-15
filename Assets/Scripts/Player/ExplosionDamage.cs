@@ -8,6 +8,10 @@ public class ExplosionDamage : MonoBehaviour
     [SerializeField] private int explosionDamage = 100;
     [SerializeField] private LayerMask enemyLayer;
     [SerializeField] private GameObject explosionEffect;
+    public void SetDamage(int dmg)
+    {
+        explosionDamage = dmg;
+    }
 
     void Start()
     {
@@ -17,8 +21,11 @@ public class ExplosionDamage : MonoBehaviour
             if (explosionEffect)
                 Instantiate(explosionEffect, transform.position, Quaternion.identity);
             Enemy enemy = hit.GetComponent<Enemy>();
-            if (enemy != null)
-                enemy.TakeDamage(explosionDamage);
+            IDamageable target = hit.GetComponent<IDamageable>();
+            if (target != null)
+            {
+                target.TakeDamage(explosionDamage);
+            }
         }
 
         Destroy(gameObject);

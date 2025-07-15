@@ -1,34 +1,36 @@
 using System.Threading;
 using UnityEngine;
+using UnityEngine.Windows;
 
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] private PlayerData playerData;
     [SerializeField] private Transform cameraHolder;
-
-    private CharacterController controller;
-    private Animator animator;
-    private float xRotation = 0f;
-    private int currentHealth;
-    private Camera activeCamera;
-    private float mouseX = 0f;
-    private float mouseY = 0f;
-    private Vector3 velocity;
-    private bool isGrounded;
     [SerializeField] private float jumpHeight = 2f;
     [SerializeField] private float gravity = -9.81f;
     [SerializeField] private Transform groundCheck;
     [SerializeField] private float groundDistance = 0.4f;
     [SerializeField] private LayerMask groundMask;
-    private PlayerInputReader input;
+
+    private CharacterController controller;
+    private Animator animator;
+    private float xRotation = 0f;
+    private float mouseX = 0f;
+    private float mouseY = 0f;
+    private Vector3 velocity;
+    private bool isGrounded;
     private float godSpeedMultiplier = 2f;
-    private float effectiveSpeed;
+    private Camera activeCamera;
+    private int currentJumps = 0;
+    [SerializeField] private int maxJumps = 2;
+    [SerializeField] private int godModeMaxJumps = 10;
+
+    [SerializeField] private float normalJumpHeight = 2f;
+    [SerializeField] private float godJumpHeight = 5f;
 
 
     void Start()
     {
-        effectiveSpeed = playerData.moveSpeed;
-        input = GetComponent<PlayerInputReader>();
         controller = GetComponent<CharacterController>();
         animator = GetComponent<Animator>();
         Cursor.lockState = CursorLockMode.Locked;
@@ -41,17 +43,10 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        if (input == null) return;
-        HandleMovement();
         UpdateActiveCamera();
-        MouseRotation();
+
     }
-    public void ResetPlayer()
-    {
-        transform.position = playerData.spawnPosition;
-        currentHealth = playerData.maxHealth;
-        xRotation = 0f;
-    }
+
     void SetSpawnPointByScene()
     {
         string sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
@@ -61,50 +56,55 @@ public class PlayerController : MonoBehaviour
         else
             playerData.spawnPosition = new Vector3(0f, 1.2f, -5f);
     }
-    void HandleMovement()
+    public void Move(Vector2 moveInput)
     {
         isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
 
         if (isGrounded && velocity.y < 0)
+        {
             velocity.y = -2f;
+            currentJumps = 0; 
+        }
 
-        Vector2 moveInput = input.MoveInput;
         Vector3 move = transform.right * moveInput.x + transform.forward * moveInput.y;
 
-        float currentSpeed = playerData.moveSpeed;
+        float speed = playerData.moveSpeed;
         if (GameManager.Instance.IsGodMode())
-            currentSpeed *= godSpeedMultiplier;
+            speed *= godSpeedMultiplier;
 
-        move *= currentSpeed;
+        move *= speed;
 
         velocity.y += gravity * Time.deltaTime;
 
+        Vector3 horizontalMovement = move * Time.deltaTime;
+        Vector3 verticalMovement = new Vector3(0f, velocity.y, 0f) * Time.deltaTime;
 
-        if (input.JumpPressed)
+        controller.Move(horizontalMovement + verticalMovement);
+    }
+
+    public void Jump()
+    {
+        int jumpLimit = GameManager.Instance.IsGodMode() ? godModeMaxJumps : maxJumps;
+        float jumpForce = GameManager.Instance.IsGodMode() ? godJumpHeight : normalJumpHeight;
+
+        if (currentJumps < jumpLimit)
         {
-            if (GameManager.Instance.IsGodMode() || isGrounded)
-            {
-                velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
-                FeedbackManager.Instance.PlayJumpFeedback(transform.position);
-            }
+            velocity.y = Mathf.Sqrt(jumpForce * -2f * gravity);
+            currentJumps++;
+            FeedbackManager.Instance.PlayJumpFeedback(transform.position);
         }
 
-        Vector3 movement = move * Time.deltaTime + velocity;
-        controller.Move(movement);
     }
 
-
-    private void UpdateActiveCamera()
+    public void ResetJumpIfGrounded()
     {
-        activeCamera = Camera.main;
+        isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
+        if (isGrounded)
+            currentJumps = 0;
     }
 
-    private float sensitivityMultiplier;
-
-    private void MouseRotation()
+    public void Rotate(Vector2 lookInput)
     {
-        Vector2 lookInput = input.LookInput;
-
         float mouseXInput = lookInput.x * playerData.mouseSensitivity;
         float mouseYInput = lookInput.y * playerData.mouseSensitivity;
 
@@ -114,5 +114,14 @@ public class PlayerController : MonoBehaviour
 
         cameraHolder.localRotation = Quaternion.Euler(mouseY, 0f, 0f);
         transform.rotation = Quaternion.Euler(0f, mouseX, 0f);
+    }
+    public void ResetPlayer()
+    {
+        transform.position = playerData.spawnPosition;
+        xRotation = 0f;
+    }
+    private void UpdateActiveCamera()
+    {
+        activeCamera = Camera.main;
     }
 }
