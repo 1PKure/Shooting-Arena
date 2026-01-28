@@ -9,6 +9,7 @@ public class PauseManager : MonoBehaviour
     [SerializeField] private GameObject audioPanel;
 
     private bool isPaused = false;
+    public bool IsPaused => isPaused;
     private PlayerController playerController;
 
     private void Awake()
@@ -51,12 +52,16 @@ public class PauseManager : MonoBehaviour
 
     public void OpenAudioPanel()
     {
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
         pausePanel.SetActive(false);
         audioPanel.SetActive(true);
     }
 
     public void ReturnToPauseMenu()
     {
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
         audioPanel.SetActive(false);
         pausePanel.SetActive(true);
     }

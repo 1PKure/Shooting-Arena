@@ -106,27 +106,32 @@ public class WeaponSystem : MonoBehaviour
         }
     }
 
-    void ShootRaycast()
+    private void ShootRaycast()
     {
-        RaycastHit hit;
-        if (Physics.Raycast(playerCamera.transform.position, playerCamera.transform.forward, out hit, weapons[currentWeaponIndex].range, enemyLayer))
+        Ray ray = new Ray(playerCamera.transform.position, playerCamera.transform.forward);
+
+        if (Physics.Raycast(ray, out RaycastHit hit, weapons[currentWeaponIndex].range))
         {
-            Enemy enemy = hit.transform.GetComponent<Enemy>();
-            if (enemy != null)
+            IDamageable target = hit.collider.GetComponentInParent<IDamageable>();
+            if (target != null && ((enemyLayer.value & (1 << hit.collider.gameObject.layer)) != 0))
             {
+                target.TakeDamage(weapons[currentWeaponIndex].damage);
                 FeedbackManager.Instance.PlayHitFeedback(hit.point);
-                IDamageable target = hit.transform.GetComponent<IDamageable>();
-                if (target != null)
-                {
-                    target.TakeDamage(weapons[currentWeaponIndex].damage);
-                }
             }
             else
             {
                 FeedbackManager.Instance.PlayMissFeedback(hit.point);
             }
         }
+        else
+        {
+            Vector3 missPoint = ray.origin + ray.direction * weapons[currentWeaponIndex].range;
+            FeedbackManager.Instance.PlayMissFeedback(missPoint);
+        }
+
+        FeedbackManager.Instance.PlayShootFeedback();
     }
+
 
     void ShootProjectile()
     {

@@ -10,6 +10,9 @@ public class PlayerInputManager : MonoBehaviour
 
     void Update()
     {
+        if (PauseManager.Instance != null && PauseManager.Instance.IsPaused)
+            return;
+        if (inputReader == null || playerController == null) return;
 
         playerController.ResetJumpIfGrounded();
         playerController.Move(inputReader.MoveInput);
@@ -17,6 +20,8 @@ public class PlayerInputManager : MonoBehaviour
 
         if (inputReader.JumpPressed)
             playerController.Jump();
+
+        if (weaponSystem == null) return;
 
         bool shouldShoot = inputReader.IsShooting(weaponSystem.IsCurrentWeaponAutomatic());
         if (shouldShoot)
@@ -31,5 +36,6 @@ public class PlayerInputManager : MonoBehaviour
         if (inputReader.WeaponKeys[0]) weaponSystem.EquipWeapon(0);
         if (inputReader.WeaponKeys[1]) weaponSystem.EquipWeapon(1);
     }
+
 }
 

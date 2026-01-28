@@ -143,17 +143,20 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1634727942366104}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 83d33ad24f19b1f4dbbe397a3e872b4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   explosionRadius: 5
   explosionDamage: 100
-  enemyLayer:
+  damageableMask:
     serializedVersion: 2
     m_Bits: 128
-  explosionEffect: {fileID: 1549373087677006, guid: 2b79ec10654f26344816627d7515c1df, type: 3}
+  collisionMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  explosionEffect: {fileID: 1804206099813350, guid: 5ed0a013702bd9f42847584f2fba7b21, type: 3}
 --- !u!1 &6659762840672841260
 GameObject:
   m_ObjectHideFlags: 0

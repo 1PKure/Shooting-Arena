@@ -4,31 +4,54 @@ using UnityEngine;
 
 public class ExplosionDamage : MonoBehaviour
 {
+    [Header("Explosion")]
     [SerializeField] private float explosionRadius = 5f;
     [SerializeField] private int explosionDamage = 100;
-    [SerializeField] private LayerMask enemyLayer;
+
+    [Tooltip("Qué capas pueden recibir daño (enemigos, destructibles, etc.)")]
+    [SerializeField] private LayerMask damageableMask;
+
+    [Tooltip("Qué capas disparan la explosión (terreno, paredes, enemigos, etc.)")]
+    [SerializeField] private LayerMask collisionMask;
+
     [SerializeField] private GameObject explosionEffect;
-    public void SetDamage(int dmg)
+
+    private bool hasExploded;
+
+    public void SetDamage(int dmg) => explosionDamage = dmg;
+
+    private void OnCollisionEnter(Collision collision)
     {
-        explosionDamage = dmg;
+        if (hasExploded) return;
+
+        Explode();
     }
 
-    void Start()
+    private void Explode()
     {
-        Collider[] hitColliders = Physics.OverlapSphere(transform.position, explosionRadius, enemyLayer);
-        foreach (var hit in hitColliders)
+        hasExploded = true;
+
+        if (explosionEffect)
+            Instantiate(explosionEffect, transform.position, Quaternion.identity);
+
+        Collider[] hits = Physics.OverlapSphere(transform.position, explosionRadius, damageableMask);
+
+        for (int i = 0; i < hits.Length; i++)
         {
-            if (explosionEffect)
-                Instantiate(explosionEffect, transform.position, Quaternion.identity);
-            Enemy enemy = hit.GetComponent<Enemy>();
-            IDamageable target = hit.GetComponent<IDamageable>();
+            IDamageable target = hits[i].GetComponentInParent<IDamageable>();
             if (target != null)
-            {
                 target.TakeDamage(explosionDamage);
-            }
         }
 
         Destroy(gameObject);
     }
+
+#if UNITY_EDITOR
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.DrawWireSphere(transform.position, explosionRadius);
+    }
+#endif
 }
+
 
