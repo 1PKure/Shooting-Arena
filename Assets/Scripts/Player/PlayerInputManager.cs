@@ -15,7 +15,7 @@ public class PlayerInputManager : MonoBehaviour
         if (inputReader == null || playerController == null) return;
 
         playerController.ResetJumpIfGrounded();
-        playerController.Move(inputReader.MoveInput);
+        playerController.Move(inputReader.MoveInput, inputReader.SprintHeld);
         playerController.Rotate(inputReader.LookInput);
 
         if (inputReader.JumpPressed)

@@ -1,5 +1,6 @@
 using UnityEngine;
 using TMPro;
+using Unity.VisualScripting;
 
 public class WeaponSystem : MonoBehaviour
 {
@@ -16,8 +17,16 @@ public class WeaponSystem : MonoBehaviour
         public float range;
         public Transform firePoint;
         public GameObject projectilePrefab;
-        public float projectileSpeed;
+        public float projectileSpeed; 
+        [Header("VFX/SFX")]
+        public GameObject muzzleVFXPrefab;
+        public GameObject hitVFXPrefab;
+        public GameObject missVFXPrefab;
+        public AudioClip shootSFX;
+        public float cameraShakeStrength;
     }
+
+    
 
     [SerializeField] private Weapon[] weapons;
     [SerializeField] private int currentWeaponIndex = 0;
@@ -25,6 +34,7 @@ public class WeaponSystem : MonoBehaviour
     [SerializeField] private TextMeshProUGUI reloadHintText;
     [SerializeField] private Camera playerCamera;
     [SerializeField] private LayerMask enemyLayer;
+    [SerializeField] private Collider ownerCollider;
 
     private float nextTimeToFire = 0f;
 
@@ -108,53 +118,76 @@ public class WeaponSystem : MonoBehaviour
 
     private void ShootRaycast()
     {
+        var w = weapons[currentWeaponIndex];
+
+        if (w.muzzleVFXPrefab != null)
+        {
+            Transform muzzle = w.firePoint != null ? w.firePoint : playerCamera.transform;
+            Instantiate(w.muzzleVFXPrefab, muzzle.position, muzzle.rotation);
+        }
+
         Ray ray = new Ray(playerCamera.transform.position, playerCamera.transform.forward);
 
-        if (Physics.Raycast(ray, out RaycastHit hit, weapons[currentWeaponIndex].range))
+        if (Physics.Raycast(ray, out RaycastHit hit, w.range, ~0, QueryTriggerInteraction.Ignore))
         {
             IDamageable target = hit.collider.GetComponentInParent<IDamageable>();
             if (target != null && ((enemyLayer.value & (1 << hit.collider.gameObject.layer)) != 0))
             {
-                target.TakeDamage(weapons[currentWeaponIndex].damage);
-                FeedbackManager.Instance.PlayHitFeedback(hit.point);
+                target.TakeDamage(w.damage);
+                FeedbackManager.Instance.PlayHitFeedback(hit.point, null, w.hitVFXPrefab);
             }
             else
             {
-                FeedbackManager.Instance.PlayMissFeedback(hit.point);
+                FeedbackManager.Instance.PlayMissFeedback(hit.point, null, w.missVFXPrefab);
             }
         }
         else
         {
-            Vector3 missPoint = ray.origin + ray.direction * weapons[currentWeaponIndex].range;
-            FeedbackManager.Instance.PlayMissFeedback(missPoint);
+            Vector3 missPoint = ray.origin + ray.direction * w.range;
+            FeedbackManager.Instance.PlayMissFeedback(missPoint, null, w.missVFXPrefab);
         }
 
-        FeedbackManager.Instance.PlayShootFeedback();
+        FeedbackManager.Instance.PlayShootFeedback(w.shootSFX);
     }
 
 
     void ShootProjectile()
     {
-        GameObject projectileGO = Instantiate(
-            weapons[currentWeaponIndex].projectilePrefab,
-            weapons[currentWeaponIndex].firePoint.position,
-            weapons[currentWeaponIndex].firePoint.rotation
-        );
+        var w = weapons[currentWeaponIndex];
 
-        projectileGO.transform.forward = playerCamera.transform.forward;
+        Ray ray = new Ray(playerCamera.transform.position, playerCamera.transform.forward);
+
+        Vector3 aimPoint = ray.origin + ray.direction * w.range;
+        if (Physics.Raycast(ray, out RaycastHit hit, w.range, ~0, QueryTriggerInteraction.Ignore))
+            aimPoint = hit.point;
+
+        Vector3 dir = (aimPoint - w.firePoint.position).normalized;
+        Quaternion rot = Quaternion.LookRotation(dir, Vector3.up);
+
+        GameObject projectileGO = Instantiate(w.projectilePrefab, w.firePoint.position, rot);
+
         Projectile projectile = projectileGO.GetComponent<Projectile>();
         if (projectile != null)
         {
-            projectile.SetDamage(weapons[currentWeaponIndex].damage);
+            projectile.SetDamage(w.damage);
+            projectile.enemyLayer = enemyLayer;
+            projectile.SetOwner(gameObject);
+            projectile.SetFeedbackOverrides(null, null, w.hitVFXPrefab, w.missVFXPrefab);
         }
 
         Rigidbody rb = projectileGO.GetComponent<Rigidbody>();
-        rb.AddForce(projectileGO.transform.forward * weapons[currentWeaponIndex].projectileSpeed, ForceMode.Impulse);
+        if (rb != null)
+        {
+            rb.velocity = dir * w.projectileSpeed;
+            rb.angularVelocity = Vector3.zero;
+        }
 
-        FeedbackManager.Instance.PlayShootFeedback();
+        if (w.muzzleVFXPrefab != null)
+            Instantiate(w.muzzleVFXPrefab, w.firePoint.position, w.firePoint.rotation);
+
+        FeedbackManager.Instance.PlayShootFeedback(w.shootSFX);
         Destroy(projectileGO, 3f);
     }
-
     public void ResetWeapons()
     {
         for (int i = 0; i < weapons.Length; i++)

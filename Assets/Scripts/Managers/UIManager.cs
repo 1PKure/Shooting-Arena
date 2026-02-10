@@ -14,7 +14,7 @@ public class UIManager : MonoBehaviour
     [Header("UI Gameplay")]
     [SerializeField] private TMP_Text ammoText;
     [SerializeField] private TMP_Text reloadHintText;
-    [SerializeField] private Slider healthBar;
+    [SerializeField] private Image healthBar;
 
     private float messageTimer;
     private float killTextTimer;
@@ -80,6 +80,6 @@ public class UIManager : MonoBehaviour
     public void UpdateHealth(int current, int max)
     {
         if (healthBar != null)
-            healthBar.value = (float)current / max;
+            healthBar.fillAmount = (float)current / max;
     }
 }

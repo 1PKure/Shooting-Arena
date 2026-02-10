@@ -13,6 +13,13 @@ MonoBehaviour:
   m_Name: PlayerData
   m_EditorClassIdentifier: 
   maxHealth: 100
-  moveSpeed: 8
+  moveSpeed: 5
+  baseSpeed: 5
   mouseSensitivity: 3
-  spawnPosition: {x: 0, y: 1.3, z: -4}
+  sprintMultiplier: 1.6
+  maxStamina: 5
+  staminaDrainPerSecond: 1
+  staminaRegenPerSecond: 1.25
+  staminaRegenDelay: 0.25
+  minStaminaToStartSprint: 0.05
+  spawnPosition: {x: 0, y: 1.2, z: -5}

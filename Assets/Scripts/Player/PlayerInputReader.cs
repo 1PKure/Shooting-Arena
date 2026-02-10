@@ -10,6 +10,7 @@ public class PlayerInputReader : MonoBehaviour
     public bool ShootPressed { get; private set; }
     public bool ReloadPressed { get; private set; }
 
+    public bool SprintHeld { get; private set; }
     public bool SwitchWeaponPressed { get; private set; }
     public bool[] WeaponKeys { get; private set; } = new bool[2];
 
@@ -17,9 +18,13 @@ public class PlayerInputReader : MonoBehaviour
     {
         MoveInput = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
         LookInput = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
+
         JumpPressed = Input.GetButtonDown("Jump");
         ShootPressed = Input.GetButton("Fire1");
+
         ReloadPressed = Input.GetKeyDown(KeyCode.R);
+
+        SprintHeld = Input.GetKey(KeyCode.LeftShift);
 
         SwitchWeaponPressed = Input.GetKeyDown(KeyCode.Q);
         WeaponKeys[0] = Input.GetKeyDown(KeyCode.Alpha1);
