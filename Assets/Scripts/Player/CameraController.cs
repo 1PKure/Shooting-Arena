@@ -2,45 +2,44 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
-    [SerializeField] private Camera firstPersonCamera;
-    [SerializeField] private Camera thirdPersonCamera;
-    [SerializeField] private Transform player;
-    [SerializeField] private Vector3 thirdPersonOffset = new Vector3(0, 2, -5);
+    [SerializeField] private Transform firstPersonTarget;
+    [SerializeField] private Transform thirdPersonTarget;
 
-    private bool isFirstPerson = true;
-    private float transitionSpeed = 1.5f;
+    [SerializeField] private float moveSpeed = 12f;
+    [SerializeField] private float rotateSpeed = 12f;
 
-    void Start()
+    [SerializeField] private float firstPersonFov = 75f;
+    [SerializeField] private float thirdPersonFov = 65f;
+
+    private Camera _cam;
+    private Transform _currentTarget;
+    private bool _isFirstPerson = true;
+
+    private void Awake()
     {
-        
-        SetCameraMode(true);
+        _cam = GetComponent<Camera>();
+        _currentTarget = firstPersonTarget;
+        _cam.fieldOfView = firstPersonFov;
     }
 
-    void Update()
+    private void Update()
     {
-        
         if (Input.GetKeyDown(KeyCode.C))
         {
-            isFirstPerson = !isFirstPerson;
-            SetCameraMode(isFirstPerson);
+            ToggleMode();
         }
 
-        if (!isFirstPerson && thirdPersonCamera.gameObject.activeSelf)
-        {
-            Vector3 targetPosition = player.position + player.TransformDirection(thirdPersonOffset);
-            thirdPersonCamera.transform.position = Vector3.Lerp(
-                thirdPersonCamera.transform.position,
-                targetPosition,
-                Time.deltaTime * transitionSpeed);
+        if (_currentTarget == null) return;
 
-           
-            thirdPersonCamera.transform.LookAt(player);
-        }
+        transform.position = Vector3.Lerp(transform.position, _currentTarget.position, moveSpeed * Time.deltaTime);
+        transform.rotation = Quaternion.Slerp(transform.rotation, _currentTarget.rotation, rotateSpeed * Time.deltaTime);
     }
 
-    void SetCameraMode(bool firstPerson)
+    private void ToggleMode()
     {
-        firstPersonCamera.gameObject.SetActive(firstPerson);
-        thirdPersonCamera.gameObject.SetActive(!firstPerson);
+        _isFirstPerson = !_isFirstPerson;
+
+        _currentTarget = _isFirstPerson ? firstPersonTarget : thirdPersonTarget;
+        _cam.fieldOfView = _isFirstPerson ? firstPersonFov : thirdPersonFov;
     }
 }

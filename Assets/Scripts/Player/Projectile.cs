@@ -6,26 +6,39 @@ public class Projectile : MonoBehaviour
     public int damage = 50;
     public LayerMask enemyLayer;
 
-    [Header("Feedback Overrides (optional)")]
-    [SerializeField] private AudioClip hitSfxOverride;
-    [SerializeField] private AudioClip missSfxOverride;
-    [SerializeField] private GameObject hitVfxOverride;
-    [SerializeField] private GameObject missVfxOverride;
+    [SerializeField] private float speed = 60f;
+
+    private Rigidbody _rb;
+    private Vector3 _dir = Vector3.forward;
+
+    private AudioClip hitSfxOverride;
+    private AudioClip missSfxOverride;
+    private GameObject hitVfxOverride;
+    private GameObject missVfxOverride;
 
     private Collider myCollider;
 
     void Awake()
     {
         myCollider = GetComponent<Collider>();
+        _rb = GetComponent<Rigidbody>();
     }
+    public void SetDirection(Vector3 direction)
+    {
+        if (direction.sqrMagnitude < 0.0001f) return;
 
+        _dir = direction.normalized;
+
+        transform.rotation = Quaternion.LookRotation(_dir, Vector3.up);
+
+        if (_rb != null)
+            _rb.velocity = _dir * speed;
+    }
     public void SetDamage(int dmg) => damage = dmg;
 
     public void SetOwner(GameObject ownerGO)
     {
         if (ownerGO == null || myCollider == null) return;
-
-        // Ignora toda colisión con el dueño (player), evita disparos raros al salir
         foreach (var c in ownerGO.GetComponentsInChildren<Collider>())
             Physics.IgnoreCollision(myCollider, c, true);
     }

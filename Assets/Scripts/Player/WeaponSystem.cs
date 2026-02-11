@@ -26,8 +26,8 @@ public class WeaponSystem : MonoBehaviour
         public float cameraShakeStrength;
     }
 
-    
 
+    [SerializeField] private Transform aimSource;
     [SerializeField] private Weapon[] weapons;
     [SerializeField] private int currentWeaponIndex = 0;
     [SerializeField] private TextMeshProUGUI ammoText;
@@ -40,6 +40,8 @@ public class WeaponSystem : MonoBehaviour
 
     void Start()
     {
+        if (aimSource == null)
+            aimSource = playerCamera.transform;
         for (int i = 0; i < weapons.Length; i++)
         {
             weapons[i].model.SetActive(i == currentWeaponIndex);
@@ -126,7 +128,7 @@ public class WeaponSystem : MonoBehaviour
             Instantiate(w.muzzleVFXPrefab, muzzle.position, muzzle.rotation);
         }
 
-        Ray ray = new Ray(playerCamera.transform.position, playerCamera.transform.forward);
+        Ray ray = new Ray(aimSource.position, aimSource.forward);
 
         if (Physics.Raycast(ray, out RaycastHit hit, w.range, ~0, QueryTriggerInteraction.Ignore))
         {
@@ -155,7 +157,7 @@ public class WeaponSystem : MonoBehaviour
     {
         var w = weapons[currentWeaponIndex];
 
-        Ray ray = new Ray(playerCamera.transform.position, playerCamera.transform.forward);
+        Ray ray = new Ray(aimSource.position, aimSource.forward);
 
         Vector3 aimPoint = ray.origin + ray.direction * w.range;
         if (Physics.Raycast(ray, out RaycastHit hit, w.range, ~0, QueryTriggerInteraction.Ignore))

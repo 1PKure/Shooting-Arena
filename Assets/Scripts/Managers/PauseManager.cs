@@ -7,6 +7,7 @@ public class PauseManager : MonoBehaviour
 
     [SerializeField] private GameObject pausePanel;
     [SerializeField] private GameObject audioPanel;
+    [SerializeField] private GameObject settingsPanel;
 
     private bool isPaused = false;
     public bool IsPaused => isPaused;
@@ -22,6 +23,7 @@ public class PauseManager : MonoBehaviour
 
     private void Start()
     {
+        settingsPanel.SetActive(false);
         pausePanel.SetActive(false);
         audioPanel.SetActive(false);
         playerController = FindObjectOfType<PlayerController>();
@@ -33,6 +35,8 @@ public class PauseManager : MonoBehaviour
         {
             if (audioPanel.activeSelf)
                 ReturnToPauseMenu();
+            else if (settingsPanel.activeSelf)
+                ReturnToPauseMenuFromSettings();
             else
                 TogglePause();
         }
@@ -72,5 +76,21 @@ public class PauseManager : MonoBehaviour
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
 #endif
+    }
+
+    public void OpenSettingsPanel()
+    {
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+        pausePanel.SetActive(false);
+        settingsPanel.SetActive(true);
+    }
+
+    public void ReturnToPauseMenuFromSettings()
+    {
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+        settingsPanel.SetActive(false);
+        pausePanel.SetActive(true);
     }
 }

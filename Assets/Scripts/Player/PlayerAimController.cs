@@ -12,6 +12,11 @@ public class PlayerAimController : MonoBehaviour
     [SerializeField] private float aimBlendSpeed = 10f;
     [SerializeField] private string aimLayerName = "UpperBody_Aim";
 
+    [Header("Aim Raycast (Camera -> AimPoint)")]
+    [SerializeField] private Camera aimCamera;
+    [SerializeField] private float maxAimDistance = 250f;
+    [SerializeField] private LayerMask aimMask = ~0;
+
     private int aimLayerIndex = -1;
 
     void Awake()
@@ -21,6 +26,9 @@ public class PlayerAimController : MonoBehaviour
 
         if (animator != null)
             aimLayerIndex = animator.GetLayerIndex(aimLayerName);
+
+        if (aimCamera == null)
+            aimCamera = Camera.main;
     }
 
     void Update()
@@ -43,5 +51,17 @@ public class PlayerAimController : MonoBehaviour
 
         weaponSocket.localPosition = Vector3.Lerp(hipPose.localPosition, aimPose.localPosition, aimWeight);
         weaponSocket.localRotation = Quaternion.Slerp(hipPose.localRotation, aimPose.localRotation, aimWeight);
+    }
+
+    public Vector3 GetAimPoint()
+    {
+        if (aimCamera == null) aimCamera = Camera.main;
+
+        Ray ray = new Ray(aimCamera.transform.position, aimCamera.transform.forward);
+
+        if (Physics.Raycast(ray, out RaycastHit hit, maxAimDistance, aimMask, QueryTriggerInteraction.Ignore))
+            return hit.point;
+
+        return ray.origin + ray.direction * maxAimDistance;
     }
 }
