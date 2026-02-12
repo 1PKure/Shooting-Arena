@@ -147,13 +147,24 @@ public class PlayerController : MonoBehaviour
             currentJumps = 0;
     }
 
-    public void Rotate(Vector2 lookInput)
+    public void Rotate(Vector2 lookInput, bool isGamepadLook)
     {
-        float mouseXInput = lookInput.x * playerData.mouseSensitivity;
-        float mouseYInput = lookInput.y * playerData.mouseSensitivity;
+        float x;
+        float y;
 
-        mouseX += mouseXInput;
-        mouseY -= mouseYInput;
+        if (isGamepadLook)
+        {
+            x = lookInput.x * playerData.gamepadLookSensitivity * Time.deltaTime;
+            y = lookInput.y * playerData.gamepadLookSensitivity * Time.deltaTime;
+        }
+        else
+        {
+            x = lookInput.x * playerData.mouseSensitivity * Time.deltaTime;
+            y = lookInput.y * playerData.mouseSensitivity * Time.deltaTime;
+        }
+
+        mouseX += x;
+        mouseY -= y;
         mouseY = Mathf.Clamp(mouseY, -80f, 80f);
 
         cameraHolder.localRotation = Quaternion.Euler(mouseY, 0f, 0f);

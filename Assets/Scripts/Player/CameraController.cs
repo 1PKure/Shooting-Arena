@@ -35,7 +35,7 @@ public class CameraController : MonoBehaviour
         transform.rotation = Quaternion.Slerp(transform.rotation, _currentTarget.rotation, rotateSpeed * Time.deltaTime);
     }
 
-    private void ToggleMode()
+    public void ToggleMode()
     {
         _isFirstPerson = !_isFirstPerson;
 

@@ -10,6 +10,7 @@ public class PlayerData : ScriptableObject
     public float moveSpeed = 5f;
     public float baseSpeed = 5f;
     public float mouseSensitivity = 3f;
+    public float gamepadLookSensitivity = 180f;
 
     [Header("Sprint")]
     [Min(1f)] public float sprintMultiplier = 1.6f;

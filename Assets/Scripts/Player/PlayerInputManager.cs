@@ -7,7 +7,8 @@ public class PlayerInputManager : MonoBehaviour
     [SerializeField] private PlayerInputReader inputReader;
     [SerializeField] private PlayerController playerController;
     [SerializeField] private WeaponSystem weaponSystem;
-
+    [SerializeField] private PauseManager pauseManager;
+    [SerializeField] private CameraController cameraController;
     void Update()
     {
         if (PauseManager.Instance != null && PauseManager.Instance.IsPaused)
@@ -16,10 +17,16 @@ public class PlayerInputManager : MonoBehaviour
 
         playerController.ResetJumpIfGrounded();
         playerController.Move(inputReader.MoveInput, inputReader.SprintHeld);
-        playerController.Rotate(inputReader.LookInput);
+        playerController.Rotate(inputReader.LookInput, true);
 
         if (inputReader.JumpPressed)
             playerController.Jump();
+
+        if (inputReader.ToggleCameraPressed)
+            cameraController.ToggleMode();
+
+        if (inputReader.PausePressed)
+            pauseManager.TogglePause();
 
         if (weaponSystem == null) return;
 

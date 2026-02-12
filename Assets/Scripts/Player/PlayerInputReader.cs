@@ -1,6 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerInputReader : MonoBehaviour
 {
@@ -10,30 +9,74 @@ public class PlayerInputReader : MonoBehaviour
     public bool ShootPressed { get; private set; }
     public bool ReloadPressed { get; private set; }
 
+    public bool IsLookFromGamepad { get; private set; }
+    public bool PausePressed { get; private set; }
     public bool SprintHeld { get; private set; }
     public bool SwitchWeaponPressed { get; private set; }
     public bool[] WeaponKeys { get; private set; } = new bool[2];
+    public bool InteractPressed { get; private set; }
+    public bool ToggleCameraPressed { get; private set; }
+    private PlayerControls controls;
+    private float lastToggleCameraTime;
+    private const float ToggleCameraCooldown = 0.20f;
 
-    void Update()
+    private void Awake()
     {
-        MoveInput = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
-        LookInput = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
+        controls = new PlayerControls();
+        controls.Gameplay.Pause.performed += _ => PausePressed = true;
+        controls.Gameplay.Move.performed += ctx => MoveInput = ctx.ReadValue<Vector2>();
+        controls.Gameplay.Move.canceled += _ => MoveInput = Vector2.zero;
+        controls.Gameplay.ToggleCamera.performed += _ =>
+        {
+            if (Time.unscaledTime - lastToggleCameraTime < ToggleCameraCooldown)
+                return;
 
-        JumpPressed = Input.GetButtonDown("Jump");
-        ShootPressed = Input.GetButton("Fire1");
+            lastToggleCameraTime = Time.unscaledTime;
+            ToggleCameraPressed = true;
+        };
+        controls.Gameplay.Look.performed += ctx =>
+        {
+            LookInput = ctx.ReadValue<Vector2>();
+            IsLookFromGamepad = ctx.control.device is Gamepad;
+        };
+        controls.Gameplay.Look.canceled += _ => LookInput = Vector2.zero;
 
-        ReloadPressed = Input.GetKeyDown(KeyCode.R);
+        controls.Gameplay.Jump.performed += _ => JumpPressed = true;
 
-        SprintHeld = Input.GetKey(KeyCode.LeftShift);
+        controls.Gameplay.Fire.performed += _ => ShootPressed = true;
+        controls.Gameplay.Fire.canceled += _ => ShootPressed = false;
 
-        SwitchWeaponPressed = Input.GetKeyDown(KeyCode.Q);
-        WeaponKeys[0] = Input.GetKeyDown(KeyCode.Alpha1);
-        WeaponKeys[1] = Input.GetKeyDown(KeyCode.Alpha2);
+
+        controls.Gameplay.Reload.performed += _ => ReloadPressed = true;
+
+        controls.Gameplay.Sprint.performed += _ => SprintHeld = true;
+        controls.Gameplay.Sprint.canceled += _ => SprintHeld = false;
+
+        controls.Gameplay.SwitchWeapon.performed += _ => SwitchWeaponPressed = true;
+        controls.Gameplay.Interact.performed += _ => InteractPressed = true;
+        //controls.Gameplay.ToggleCamera.performed += _ => ToggleCameraPressed = true;
+
+
+    }
+
+    private void OnEnable() => controls.Enable();
+    private void OnDisable() => controls.Disable();
+
+    private void LateUpdate()
+    {
+        JumpPressed = false;
+        ReloadPressed = false;
+        SwitchWeaponPressed = false;
+        InteractPressed = false;
+        PausePressed = false;
+        ToggleCameraPressed = false;
+        WeaponKeys[0] = false;
+        WeaponKeys[1] = false;
     }
 
     public bool IsShooting(bool isAutomatic)
     {
-        return isAutomatic ? Input.GetButton("Fire1") : Input.GetButtonDown("Fire1");
+
+        return isAutomatic ? ShootPressed : false;
     }
 }
-
