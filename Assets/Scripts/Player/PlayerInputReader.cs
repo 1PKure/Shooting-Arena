@@ -16,10 +16,10 @@ public class PlayerInputReader : MonoBehaviour
     public bool[] WeaponKeys { get; private set; } = new bool[2];
     public bool InteractPressed { get; private set; }
     public bool ToggleCameraPressed { get; private set; }
-    private PlayerControls controls;
+    public int ToggleCameraCount { get; private set; }
     private float lastToggleCameraTime;
     private const float ToggleCameraCooldown = 0.20f;
-
+    private PlayerControls controls;
     private void Awake()
     {
         controls = new PlayerControls();
@@ -54,7 +54,12 @@ public class PlayerInputReader : MonoBehaviour
 
         controls.Gameplay.SwitchWeapon.performed += _ => SwitchWeaponPressed = true;
         controls.Gameplay.Interact.performed += _ => InteractPressed = true;
-        //controls.Gameplay.ToggleCamera.performed += _ => ToggleCameraPressed = true;
+        controls.Gameplay.ToggleCamera.performed += _ =>
+        {
+            if (Time.unscaledTime - lastToggleCameraTime < ToggleCameraCooldown) return;
+            lastToggleCameraTime = Time.unscaledTime;
+            ToggleCameraCount++;
+        };
 
 
     }

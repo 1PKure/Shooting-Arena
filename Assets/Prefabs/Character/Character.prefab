@@ -344,14 +344,14 @@ MonoBehaviour:
   - name: Rifle
     model: {fileID: 4662108993736336128}
     damage: 35
-    fireRate: 3
+    fireRate: 1.5
     maxAmmo: 50
     currentAmmo: 30
     isAutomatic: 1
     range: 5
     firePoint: {fileID: 1731268272818346816}
     projectilePrefab: {fileID: 1878670205805360, guid: 9643aebe3b164bc4cae610a164fe007a, type: 3}
-    projectileSpeed: 20
+    projectileSpeed: 15
     muzzleVFXPrefab: {fileID: 157586, guid: 2574ca206a571a342a7fab69fdfb87aa, type: 3}
     hitVFXPrefab: {fileID: 100000, guid: fabff3cbe4a4be24a90f7b23e155e025, type: 3}
     missVFXPrefab: {fileID: 0}
@@ -535,6 +535,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3951504787223785028}
+  - component: {fileID: 6372098505909704632}
   m_Layer: 0
   m_Name: CameraHolder
   m_TagString: Untagged
@@ -560,6 +561,24 @@ Transform:
   - {fileID: 5612389610159522057}
   m_Father: {fileID: 5429257504562071690}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6372098505909704632
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8586911244961027249}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55fe1fa8bd8eeae46988ef0cfefb1a59, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  firstPersonTarget: {fileID: 7669805310619376220}
+  thirdPersonTarget: {fileID: 4721304645783899737}
+  moveSpeed: 10
+  rotateSpeed: 10
+  firstPersonFov: 75
+  thirdPersonFov: 65
 --- !u!1001 &2510771940564381768
 PrefabInstance:
   m_ObjectHideFlags: 0
