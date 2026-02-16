@@ -22,6 +22,21 @@ public class PlayerController : MonoBehaviour
     [Header("God Mode")]
     [SerializeField] private float godSpeedMultiplier = 2f;
 
+
+    [Header("Look Limits")]
+    [SerializeField] private float firstPersonMinPitch = -80f;
+    [SerializeField] private float firstPersonMaxPitch = 80f;
+    [SerializeField] private float thirdPersonMinPitch = -25f;
+    [SerializeField] private float thirdPersonMaxPitch = 60f;
+
+    [Header("Look Sensitivity")]
+    [SerializeField] private float thirdPersonSensitivityMultiplier = 0.6f;
+
+    private bool isFirstPerson = true;
+    public void SetFirstPerson(bool value)
+    {
+        isFirstPerson = value;
+    }
     private CharacterController controller;
     private Animator animator;
 
@@ -42,6 +57,7 @@ public class PlayerController : MonoBehaviour
     private static readonly int SpeedHash = Animator.StringToHash("Speed");
     private static readonly int GroundedHash = Animator.StringToHash("Grounded");
     private static readonly int VelocityYHash = Animator.StringToHash("VelocityY");
+
 
 
 
@@ -159,13 +175,19 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            x = lookInput.x * playerData.mouseSensitivity * Time.deltaTime;
-            y = lookInput.y * playerData.mouseSensitivity * Time.deltaTime;
+            float sens = playerData.mouseSensitivity;
+            if (!isFirstPerson) sens *= thirdPersonSensitivityMultiplier;
+
+            x = lookInput.x * sens;
+            y = lookInput.y * sens;
         }
 
         mouseX += x;
         mouseY -= y;
-        mouseY = Mathf.Clamp(mouseY, -80f, 80f);
+
+        float minPitch = isFirstPerson ? firstPersonMinPitch : thirdPersonMinPitch;
+        float maxPitch = isFirstPerson ? firstPersonMaxPitch : thirdPersonMaxPitch;
+        mouseY = Mathf.Clamp(mouseY, minPitch, maxPitch);
 
         cameraHolder.localRotation = Quaternion.Euler(mouseY, 0f, 0f);
         transform.rotation = Quaternion.Euler(0f, mouseX, 0f);
@@ -173,13 +195,21 @@ public class PlayerController : MonoBehaviour
     public void ResetPlayer()
     {
         transform.position = playerData.spawnPosition;
+
         mouseX = transform.eulerAngles.y;
-        mouseY = 0f;
+
+        float pitch = cameraHolder.localEulerAngles.x;
+        if (pitch > 180f) pitch -= 360f;
+        mouseY = pitch;
+
         velocity = Vector3.zero;
         currentJumps = 0;
 
         stamina = Mathf.Max(0f, playerData.maxStamina);
         isSprinting = false;
+
+        cameraHolder.localRotation = Quaternion.Euler(mouseY, 0f, 0f);
+        transform.rotation = Quaternion.Euler(0f, mouseX, 0f);
     }
     private void UpdateActiveCamera()
     {

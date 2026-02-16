@@ -30,6 +30,7 @@ public class GameManager : MonoBehaviour
     private bool isTutorialLevel = false;
     private bool tutorialReadyToAdvance;
     [SerializeField] private GameObject nextLevel;
+    [SerializeField] private EndScreenFader endScreenFader;
 
     void Awake()
     {
@@ -59,10 +60,8 @@ public class GameManager : MonoBehaviour
             if (spawner != null) spawner.SetDifficulty(currentDifficulty);
         }
 
-        if (gameOverPanel != null)
-        {
-            gameOverPanel.SetActive(false);
-        }
+        if (victoryPanel != null) victoryPanel.SetActive(false);
+        if (gameOverPanel != null) gameOverPanel.SetActive(false);
 
         UpdateScoreUI();
     }
@@ -97,6 +96,8 @@ public class GameManager : MonoBehaviour
 
         score += points;
         UpdateScoreUI();
+        var events = Code.Service.ServiceProvider.Instance.GetService<Systems.CentralizeEventSystem.CentralizeEventSystem>();
+        events?.Get<GameEvents.ScoreChanged>()?.Invoke(score);
         if (!isTutorialLevel && score >= killGoal)
         {
             Victory();
@@ -119,6 +120,8 @@ public class GameManager : MonoBehaviour
             int seconds = Mathf.FloorToInt(remainingTime % 60);
             timeText.text = string.Format("Time: {0:00}:{1:00}", minutes, seconds);
         }
+        var events = Code.Service.ServiceProvider.Instance.GetService<Systems.CentralizeEventSystem.CentralizeEventSystem>();
+        events?.Get<GameEvents.TimeChanged>()?.Invoke(remainingTime);
     }
 
     public void GameOver()
@@ -130,6 +133,8 @@ public class GameManager : MonoBehaviour
         if (finalScoreText != null)
             finalScoreText.text = "Final Score: " + score.ToString();
 
+        var events = Code.Service.ServiceProvider.Instance.GetService<Systems.CentralizeEventSystem.CentralizeEventSystem>();
+        events?.Get<GameEvents.GameOver>()?.Invoke(score);
         FeedbackManager.Instance.PlayLoseFeedback();
     }
 
@@ -141,17 +146,25 @@ public class GameManager : MonoBehaviour
     public void FullReset()
     {
         isGameOver = false;
+        victoryTriggered = false;          
+        tutorialReadyToAdvance = false;    
+
         score = 0;
         remainingTime = gameTime;
         Time.timeScale = 1f;
 
         if (victoryPanel != null) victoryPanel.SetActive(false);
         if (gameOverPanel != null) gameOverPanel.SetActive(false);
+
         UpdateScoreUI();
         UpdateTimeUI();
 
         var player = FindObjectOfType<PlayerController>();
-        if (player != null) player.ResetPlayer();
+        if (player != null)
+        {
+            player.enabled = true;         
+            player.ResetPlayer();
+        }
 
         foreach (var bullet in GameObject.FindGameObjectsWithTag("Bullet"))
             Destroy(bullet);
@@ -159,6 +172,7 @@ public class GameManager : MonoBehaviour
         if (spawner != null) spawner.ResetSpawner();
 
         Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;            
     }
 
     public void SaveGame()
@@ -174,6 +188,8 @@ public class GameManager : MonoBehaviour
             playerPosition = new SerializableVector3(player.transform.position)
         };
 
+        var events = Code.Service.ServiceProvider.Instance.GetService<Systems.CentralizeEventSystem.CentralizeEventSystem>();
+        events?.Get<GameEvents.GameSaved>()?.Invoke();
         SaveSystem.Save(data);
     }
 
@@ -190,6 +206,9 @@ public class GameManager : MonoBehaviour
 
         UpdateScoreUI();
         UpdateTimeUI();
+
+        var events = Code.Service.ServiceProvider.Instance.GetService<Systems.CentralizeEventSystem.CentralizeEventSystem>();
+        events?.Get<GameEvents.GameLoaded>()?.Invoke(data);
     }
 
     public void DeleteSave() => SaveSystem.DeleteSave();
@@ -201,6 +220,8 @@ public class GameManager : MonoBehaviour
 
         victoryTriggered = true;
         SetGameEndState(true, victoryPanel);
+        var events = Code.Service.ServiceProvider.Instance.GetService<Systems.CentralizeEventSystem.CentralizeEventSystem>();
+        events?.Get<GameEvents.Victory>()?.Invoke(score);
         FeedbackManager.Instance.PlayWinFeedback();
     }
     private void SetGameEndState(bool showPanel, GameObject panel)
@@ -208,7 +229,20 @@ public class GameManager : MonoBehaviour
         isGameOver = true;
         Time.timeScale = 0f;
 
-        if (panel != null) panel.SetActive(showPanel);
+        if (panel != null)
+        {
+            var fader = panel.GetComponent<EndScreenFader>();
+
+            if (fader != null)
+            {
+                if (showPanel) fader.Show();
+                else fader.HideInstant();
+            }
+            else
+            {
+                panel.SetActive(showPanel);
+            }
+        }
 
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;

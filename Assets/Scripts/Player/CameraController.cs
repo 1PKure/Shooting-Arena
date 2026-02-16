@@ -1,25 +1,28 @@
 using UnityEngine;
+using Cinemachine;
 
 public class CameraController : MonoBehaviour
 {
-    [SerializeField] private Transform firstPersonTarget;
-    [SerializeField] private Transform thirdPersonTarget;
+    [Header("Virtual Cameras")]
+    [SerializeField] private CinemachineVirtualCamera firstPersonVcam;
+    [SerializeField] private CinemachineVirtualCamera thirdPersonVcam;
 
-    [SerializeField] private float moveSpeed = 12f;
-    [SerializeField] private float rotateSpeed = 12f;
+    [Header("Priorities")]
+    [SerializeField] private int activePriority = 20;
+    [SerializeField] private int inactivePriority = 10;
 
-    [SerializeField] private float firstPersonFov = 75f;
-    [SerializeField] private float thirdPersonFov = 65f;
+    [Header("Optional: default mode")]
+    [SerializeField] private bool startFirstPerson = true;
 
-    private Camera _cam;
-    private Transform _currentTarget;
-    private bool _isFirstPerson = true;
+    [SerializeField] private PlayerController player;
+
+    private bool _isFirstPerson;
 
     private void Awake()
     {
-        _cam = GetComponent<Camera>();
-        _currentTarget = firstPersonTarget;
-        _cam.fieldOfView = firstPersonFov;
+        _isFirstPerson = startFirstPerson;
+        ApplyMode();
+
     }
 
     private void Update()
@@ -28,18 +31,36 @@ public class CameraController : MonoBehaviour
         {
             ToggleMode();
         }
-
-        if (_currentTarget == null) return;
-
-        transform.position = Vector3.Lerp(transform.position, _currentTarget.position, moveSpeed * Time.deltaTime);
-        transform.rotation = Quaternion.Slerp(transform.rotation, _currentTarget.rotation, rotateSpeed * Time.deltaTime);
     }
 
     public void ToggleMode()
     {
         _isFirstPerson = !_isFirstPerson;
+        ApplyMode();
 
-        _currentTarget = _isFirstPerson ? firstPersonTarget : thirdPersonTarget;
-        _cam.fieldOfView = _isFirstPerson ? firstPersonFov : thirdPersonFov;
+    }
+
+    private void ApplyMode()
+    {
+        if (firstPersonVcam == null || thirdPersonVcam == null)
+        {
+            Debug.LogError("CameraController: Virtual Cameras are not assigned.");
+            return;
+        }
+
+        if (_isFirstPerson)
+        {
+            firstPersonVcam.Priority = activePriority;
+            thirdPersonVcam.Priority = inactivePriority;
+        }
+        else
+        {
+            firstPersonVcam.Priority = inactivePriority;
+            thirdPersonVcam.Priority = activePriority;
+        }
+
+        if (player != null)
+            player.SetFirstPerson(_isFirstPerson);
+
     }
 }

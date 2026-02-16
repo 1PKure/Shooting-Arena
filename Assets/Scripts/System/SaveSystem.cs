@@ -1,43 +1,54 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+using System;
 using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
+using UnityEngine;
 
 public static class SaveSystem
 {
-    private static string savePath => Application.persistentDataPath + "/save.dat";
+    private static string SavePath => Path.Combine(Application.persistentDataPath, "save.json");
 
     public static void Save(GameData data)
     {
-        BinaryFormatter formatter = new BinaryFormatter();
-        FileStream stream = new FileStream(savePath, FileMode.Create);
-
-        formatter.Serialize(stream, data);
-        stream.Close();
+        try
+        {
+            string json = JsonUtility.ToJson(data, true);
+            File.WriteAllText(SavePath, json);
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"Save failed: {e.Message}");
+        }
     }
 
     public static GameData Load()
     {
-        if (File.Exists(savePath))
+        try
         {
-            BinaryFormatter formatter = new BinaryFormatter();
-            FileStream stream = new FileStream(savePath, FileMode.Open);
+            if (!File.Exists(SavePath))
+            {
+                Debug.LogWarning("No save file found.");
+                return null;
+            }
 
-            GameData data = formatter.Deserialize(stream) as GameData;
-            stream.Close();
-            return data;
+            string json = File.ReadAllText(SavePath);
+            return JsonUtility.FromJson<GameData>(json);
         }
-        else
+        catch (Exception e)
         {
-            Debug.LogWarning("No save file found.");
+            Debug.LogError($"Load failed: {e.Message}");
             return null;
         }
     }
 
     public static void DeleteSave()
     {
-        if (File.Exists(savePath))
-            File.Delete(savePath);
+        try
+        {
+            if (File.Exists(SavePath))
+                File.Delete(SavePath);
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"DeleteSave failed: {e.Message}");
+        }
     }
 }
