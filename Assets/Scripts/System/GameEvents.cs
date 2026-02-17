@@ -6,4 +6,7 @@ public static class GameEvents
     public delegate void Victory(int finalScore);
     public delegate void GameSaved();
     public delegate void GameLoaded(GameData data);
+
+    public delegate void AchievementUnlocked(string achievementId);
+    public delegate void AchievementProgress(string achievementId, int current, int target);
 }

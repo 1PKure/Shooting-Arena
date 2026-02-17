@@ -1,6 +1,6 @@
-using System.Threading;
 using UnityEngine;
-using UnityEngine.Windows;
+using System;
+
 
 public class PlayerController : MonoBehaviour
 {
@@ -40,7 +40,6 @@ public class PlayerController : MonoBehaviour
     private CharacterController controller;
     private Animator animator;
 
-    private float xRotation = 0f;
     private float mouseX = 0f;
     private float mouseY = 0f;
 
@@ -59,8 +58,11 @@ public class PlayerController : MonoBehaviour
     private static readonly int VelocityYHash = Animator.StringToHash("VelocityY");
 
 
-
-
+    public event Action<float> OnStaminaNormalizedChanged;
+    private void NotifyStaminaChanged()
+    {
+        OnStaminaNormalizedChanged?.Invoke(StaminaNormalized);
+    }
     void Start()
     {
         controller = GetComponent<CharacterController>();
@@ -75,6 +77,7 @@ public class PlayerController : MonoBehaviour
         UpdateActiveCamera();
 
         stamina = Mathf.Max(0f, playerData.maxStamina);
+        NotifyStaminaChanged();
     }
 
     void Update()
@@ -207,6 +210,7 @@ public class PlayerController : MonoBehaviour
 
         stamina = Mathf.Max(0f, playerData.maxStamina);
         isSprinting = false;
+        NotifyStaminaChanged();
 
         cameraHolder.localRotation = Quaternion.Euler(mouseY, 0f, 0f);
         transform.rotation = Quaternion.Euler(0f, mouseX, 0f);
@@ -232,8 +236,13 @@ public class PlayerController : MonoBehaviour
         if (GameManager.Instance.IsGodMode())
             return;
 
+        float before = stamina;
+
         stamina -= playerData.staminaDrainPerSecond * Time.deltaTime;
         if (stamina < 0f) stamina = 0f;
+
+        if (!Mathf.Approximately(before, stamina))
+            NotifyStaminaChanged();
     }
 
     private void RegenStamina()
@@ -244,8 +253,13 @@ public class PlayerController : MonoBehaviour
         if (Time.time - lastSprintTime < playerData.staminaRegenDelay)
             return;
 
+        float before = stamina;
+
         stamina += playerData.staminaRegenPerSecond * Time.deltaTime;
         if (stamina > playerData.maxStamina) stamina = playerData.maxStamina;
+
+        if (!Mathf.Approximately(before, stamina))
+            NotifyStaminaChanged();
     }
 
     private void UpdateAnimator(float inputMagnitude, float currentSpeed)
