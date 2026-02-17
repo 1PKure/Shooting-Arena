@@ -10,6 +10,16 @@ public class EnemySpawner : MonoBehaviour
     public int maxEnemies = 10;
     public float spawnInterval = 2f;
 
+    [Header("Spawn Validation")]
+    [SerializeField] private float spawnCheckRadius = 1.0f;
+    [SerializeField] private LayerMask enemyLayerMask = ~0;
+    [SerializeField] private int maxSpawnPointTries = 16;
+
+    [SerializeField] private LayerMask groundMask;
+    [SerializeField] private float rayUp = 5f;
+    [SerializeField] private float rayDown = 20f;
+    [SerializeField] private float epsilon = 0.02f;
+
     private List<GameObject> activeEnemies = new List<GameObject>();
     private float nextSpawnTime = 0f;
     private Difficulty currentDifficulty;
@@ -18,43 +28,60 @@ public class EnemySpawner : MonoBehaviour
     void Update()
     {
         if (!allowSpawn) return;
+
+        activeEnemies.RemoveAll(e => e == null || !e.activeInHierarchy);
+
         if (activeEnemies.Count < maxEnemies && Time.time >= nextSpawnTime)
         {
             SpawnEnemy();
             nextSpawnTime = Time.time + spawnInterval;
         }
-
-        activeEnemies.RemoveAll(e => e == null || !e.activeInHierarchy);
     }
 
-    public void StopSpawning()
-    {
-        allowSpawn = false;
-    }
+    public void StopSpawning() => allowSpawn = false;
+
     void SpawnEnemy()
     {
-        Transform spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Count)];
         EnemyData selectedData = GetRandomEnemyData();
+        if (selectedData == null || selectedData.prefab == null) return;
+        if (spawnPoints == null || spawnPoints.Count == 0) return;
 
-        if (selectedData != null && selectedData.prefab != null)
+        Transform spawnPoint = GetFreeSpawnPoint();
+
+        if (spawnPoint == null)
         {
-            GameObject enemy = Instantiate(selectedData.prefab, spawnPoint.position, spawnPoint.rotation);
-            activeEnemies.Add(enemy);
+            return;
         }
-    }
 
-    public void SetDifficulty(Difficulty difficulty)
-    {
-        this.currentDifficulty = difficulty;
+        GameObject enemy = SpawnAligned(selectedData.prefab, spawnPoint.position, spawnPoint.rotation);
+        activeEnemies.Add(enemy);
     }
+    Transform GetFreeSpawnPoint()
+    {
+        int tries = Mathf.Min(maxSpawnPointTries, spawnPoints.Count);
+
+        for (int i = 0; i < tries; i++)
+        {
+            Transform sp = spawnPoints[Random.Range(0, spawnPoints.Count)];
+            if (sp == null) continue;
+
+            bool occupied = Physics.CheckSphere(sp.position, spawnCheckRadius, enemyLayerMask, QueryTriggerInteraction.Ignore);
+            if (!occupied)
+                return sp;
+        }
+
+        return null;
+    }
+    public void SetDifficulty(Difficulty difficulty) => currentDifficulty = difficulty;
 
     public void ResetSpawner()
     {
         foreach (var enemy in GameObject.FindGameObjectsWithTag("Enemy"))
-        {
             Destroy(enemy);
-        }
+
+        activeEnemies.Clear();
         nextSpawnTime = Time.time + spawnInterval;
+        allowSpawn = true;
     }
 
 
@@ -72,6 +99,7 @@ public class EnemySpawner : MonoBehaviour
 
         int rand = Random.Range(0, totalWeight);
         int acc = 0;
+
         foreach (var data in filtered)
         {
             acc += data.weight;
@@ -80,5 +108,47 @@ public class EnemySpawner : MonoBehaviour
         }
 
         return null;
+    }
+
+    private GameObject SpawnAligned(GameObject prefab, Vector3 approxPos, Quaternion rot)
+    {
+        Vector3 origin = approxPos + Vector3.up * rayUp;
+        if (!Physics.Raycast(origin, Vector3.down, out RaycastHit hit, rayUp + rayDown, groundMask, QueryTriggerInteraction.Ignore))
+            return Instantiate(prefab, approxPos, rot);
+
+        GameObject go = Instantiate(prefab, approxPos, rot);
+
+        CapsuleCollider cap = go.GetComponentInChildren<CapsuleCollider>();
+        if (cap != null)
+        {
+            float deltaY = (hit.point.y + epsilon) - cap.bounds.min.y;
+            go.transform.position += new Vector3(0f, deltaY, 0f);
+        }
+        else
+        {
+        }
+
+        return go;
+    }
+
+    Bounds GetWorldBounds(GameObject go)
+    {
+        var renderers = go.GetComponentsInChildren<Renderer>();
+        if (renderers.Length > 0)
+        {
+            Bounds b = renderers[0].bounds;
+            for (int i = 1; i < renderers.Length; i++) b.Encapsulate(renderers[i].bounds);
+            return b;
+        }
+
+        var colliders = go.GetComponentsInChildren<Collider>();
+        if (colliders.Length > 0)
+        {
+            Bounds b = colliders[0].bounds;
+            for (int i = 1; i < colliders.Length; i++) b.Encapsulate(colliders[i].bounds);
+            return b;
+        }
+
+        return new Bounds(go.transform.position, Vector3.zero);
     }
 }
