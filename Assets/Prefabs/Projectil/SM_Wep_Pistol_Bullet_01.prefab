@@ -11,10 +11,10 @@ GameObject:
   - component: {fileID: 4236172380484288}
   - component: {fileID: 33432412982878236}
   - component: {fileID: 23876720483922132}
-  - component: {fileID: 64473859674041036}
   - component: {fileID: 7078067863111454873}
   - component: {fileID: -5009586260734457926}
-  m_Layer: 0
+  - component: {fileID: 870892036017980729}
+  m_Layer: 10
   m_Name: SM_Wep_Pistol_Bullet_01
   m_TagString: Bullet
   m_Icon: {fileID: 0}
@@ -86,28 +86,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &64473859674041036
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1878670205805360}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 1
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 43263282098662904, guid: 8693f0af57105cc4da306fd300b85f7e, type: 2}
 --- !u!54 &7078067863111454873
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -151,3 +129,25 @@ MonoBehaviour:
   enemyLayer:
     serializedVersion: 2
     m_Bits: 128
+  speed: 60
+--- !u!135 &870892036017980729
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1878670205805360}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.025
+  m_Center: {x: -0.0000000018626454, y: -0.000000009546057, z: -0.00000007636846}

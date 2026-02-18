@@ -6,7 +6,8 @@ public class PlayerInputReader : MonoBehaviour
     public Vector2 MoveInput { get; private set; }
     public Vector2 LookInput { get; private set; }
     public bool JumpPressed { get; private set; }
-    public bool ShootPressed { get; private set; }
+    public bool ShootPressedThisFrame { get; private set; }
+    public bool ShootHeld { get; private set; }
     public bool ReloadPressed { get; private set; }
 
     public bool IsLookFromGamepad { get; private set; }
@@ -43,8 +44,12 @@ public class PlayerInputReader : MonoBehaviour
 
         controls.Gameplay.Jump.performed += _ => JumpPressed = true;
 
-        controls.Gameplay.Fire.performed += _ => ShootPressed = true;
-        controls.Gameplay.Fire.canceled += _ => ShootPressed = false;
+        controls.Gameplay.Fire.performed += _ =>
+        {
+            ShootHeld = true;
+            ShootPressedThisFrame = true;
+        };
+        controls.Gameplay.Fire.canceled += _ => ShootHeld = false;
 
 
         controls.Gameplay.Reload.performed += _ => ReloadPressed = true;
@@ -75,13 +80,14 @@ public class PlayerInputReader : MonoBehaviour
         InteractPressed = false;
         PausePressed = false;
         ToggleCameraPressed = false;
+        ShootPressedThisFrame = false;
+
         WeaponKeys[0] = false;
         WeaponKeys[1] = false;
     }
 
     public bool IsShooting(bool isAutomatic)
     {
-
-        return isAutomatic ? ShootPressed : false;
+        return isAutomatic ? ShootHeld : ShootPressedThisFrame;
     }
 }

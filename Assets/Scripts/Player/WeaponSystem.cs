@@ -42,10 +42,23 @@ public class WeaponSystem : MonoBehaviour
     {
         if (aimSource == null)
             aimSource = playerCamera.transform;
+
+        
         for (int i = 0; i < weapons.Length; i++)
         {
-            weapons[i].model.SetActive(i == currentWeaponIndex);
+            if (weapons[i].maxAmmo < 0) weapons[i].maxAmmo = 0;
+
+            
+            if (weapons[i].currentAmmo <= 0)
+                weapons[i].currentAmmo = weapons[i].maxAmmo;
+
+            if (weapons[i].fireRate <= 0f)
+                weapons[i].fireRate = 1f; 
         }
+
+        for (int i = 0; i < weapons.Length; i++)
+            weapons[i].model.SetActive(i == currentWeaponIndex);
+
         NotifyUI();
     }
 

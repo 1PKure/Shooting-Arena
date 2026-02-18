@@ -52,6 +52,8 @@ public static class AchievementsStorage
         {
             Debug.LogWarning($"[AchievementsStorage] Save failed: {e.Message}");
         }
+
+        Debug.Log($"[AchievementsStorage] Saved {states.Count} achievements to: {FilePath}");
     }
 
     public static void Delete()

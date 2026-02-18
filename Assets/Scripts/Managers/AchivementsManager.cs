@@ -7,8 +7,11 @@ public class AchievementsManager : MonoBehaviour
 {
     [SerializeField] private AchievementDatabase database;
 
+    [Header("UI")]
+    [SerializeField] private AchievementsPopupUI popupUI;
     private CentralizeEventSystem _events;
     private AchievementService _service;
+    private bool _testUnlocked;
 
     private void Awake()
     {
@@ -18,11 +21,27 @@ public class AchievementsManager : MonoBehaviour
         _service = new AchievementService(database.definitions, savedStates);
         _service.OnAchievementUnlocked += OnUnlocked;
 
+        if (popupUI != null)
+            popupUI.Bind(_service);
+
         _events.AddListener<GameEvents.ScoreChanged>(OnScoreChanged);
         _events.AddListener<GameEvents.Victory>(OnVictory);
         _events.AddListener<GameEvents.GameLoaded>(OnGameLoaded);
     }
+    private void Update()
+    {
+        if (_testUnlocked) return;
 
+        if (Input.GetKeyDown(KeyCode.Y))
+        {
+            _testUnlocked = true;
+
+            _service.SetUnlocked("test_y");
+            AchievementsStorage.Save(_service.GetAllStates());
+
+            Debug.Log("[AchievementsManager] Test achievement unlocked: test_y");
+        }
+    }
     private void OnDestroy()
     {
         if (_events != null)

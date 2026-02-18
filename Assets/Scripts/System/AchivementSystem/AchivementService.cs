@@ -51,6 +51,7 @@ public class AchievementService
             st.unlocked = true;
             st.unlockedUnixTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
             OnAchievementUnlocked?.Invoke(def);
+            Debug.Log($"[AchievementService] Unlocked: {id}");
         }
     }
 
@@ -64,5 +65,6 @@ public class AchievementService
         st.unlocked = true;
         st.unlockedUnixTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
         OnAchievementUnlocked?.Invoke(def);
+        Debug.Log($"[AchievementService] Unlocked: {id}");
     }
 }

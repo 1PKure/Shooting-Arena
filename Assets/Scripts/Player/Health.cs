@@ -47,12 +47,12 @@ public class Health : MonoBehaviour, IDamageable
         {
             Debug.Log("Jugador muerto");
             GameManager.Instance.GameOver();
+            return;
         }
-        else
-        {
-            FeedbackManager.Instance.PlayDeathFeedback(transform.position);
-            GameManager.Instance.AddScore(scoreOnDeath);
-            Destroy(gameObject);
-        }
+
+        FeedbackManager.Instance.PlayDeathFeedback(transform.position);
+        GameManager.Instance.AddScore(scoreOnDeath);
+
+        Destroy(transform.root.gameObject);
     }
 }

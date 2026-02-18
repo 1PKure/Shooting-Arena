@@ -178,7 +178,7 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            float sens = playerData.mouseSensitivity;
+            float sens = playerData.mouseSensitivity * Time.deltaTime;
             if (!isFirstPerson) sens *= thirdPersonSensitivityMultiplier;
 
             x = lookInput.x * sens;
