@@ -9,49 +9,66 @@ public class ShooterEnemy : Enemy
     public Transform firePoint;
     public float projectileSpeed = 10f;
 
+    [Header("Animation")]
+    [SerializeField] private Animator animator;
+    [SerializeField] private Transform modelToRotate;
+    private static readonly int ShootParam = Animator.StringToHash("Shoot");
+    private static readonly int IsAimingParam = Animator.StringToHash("IsAiming");
+
     private Transform player;
     private float nextTimeToFire = 0f;
+
     protected override void Start()
     {
         base.Start();
-        player = GameObject.FindGameObjectWithTag("Player").transform;
+
+        var playerGo = GameObject.FindGameObjectWithTag("Player");
+        player = playerGo != null ? playerGo.transform : null;
+
+        if (animator == null)
+            animator = GetComponentInChildren<Animator>();
+        if (modelToRotate == null && animator != null)
+            modelToRotate = animator.transform;
     }
 
     void Update()
     {
-        //if (!isActive) return;
+        if (player == null) return;
 
-        
-        if (player != null && Vector3.Distance(transform.position, player.position) <= detectionRange)
+        bool inRange = Vector3.Distance(transform.position, player.position) <= detectionRange;
+        if (animator != null) animator.SetBool(IsAimingParam, inRange);
+
+        if (!inRange) return;
+
+        Vector3 direction = player.position - transform.position;
+        direction.y = 0f;
+
+        Quaternion look = Quaternion.LookRotation(direction);
+        if (modelToRotate != null) modelToRotate.rotation = look;
+        else transform.rotation = look;
+
+        if (Time.time >= nextTimeToFire)
         {
-            
-            Vector3 direction = player.position - transform.position;
-            direction.y = 0; 
-            transform.rotation = Quaternion.LookRotation(direction);
-
-            
-            if (Time.time >= nextTimeToFire)
-            {
-                nextTimeToFire = Time.time + 1f / fireRate;
-                Shoot();
-            }
+            nextTimeToFire = Time.time + 1f / fireRate;
+            Shoot();
         }
     }
 
     void Shoot()
     {
-        
+        if (animator != null) animator.SetTrigger(ShootParam);
+
         GameObject projectile = Instantiate(projectilePrefab, firePoint.position, firePoint.rotation);
         Rigidbody rb = projectile.GetComponent<Rigidbody>();
 
-        
         Vector3 direction = (player.position - firePoint.position).normalized;
-        direction += new Vector3(Random.Range(-0.1f, 0.1f), Random.Range(-0.1f, 0.1f), Random.Range(-0.1f, 0.1f));
+        direction += new Vector3(
+            Random.Range(-0.1f, 0.1f),
+            Random.Range(-0.1f, 0.1f),
+            Random.Range(-0.1f, 0.1f)
+        );
 
-        
         rb.AddForce(direction * projectileSpeed, ForceMode.Impulse);
-
-        
         Destroy(projectile, 5f);
     }
 }

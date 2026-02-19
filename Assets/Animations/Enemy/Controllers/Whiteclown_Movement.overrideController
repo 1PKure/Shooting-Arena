@@ -1,0 +1,13 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!221 &22100000
+AnimatorOverrideController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Whiteclown_Movement
+  m_Controller: {fileID: 9100000, guid: 10a04a9def954734bab72c18b7405446, type: 2}
+  m_Clips:
+  - m_OriginalClip: {fileID: -203655887218126122, guid: 6a797c28d4477c64894dd2a9c29de7eb, type: 3}
+    m_OverrideClip: {fileID: -203655887218126122, guid: 6a797c28d4477c64894dd2a9c29de7eb, type: 3}
