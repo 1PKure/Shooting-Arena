@@ -6,7 +6,7 @@ public class AchievementState
     public string id;
     public int currentValue;
     public bool unlocked;
-    public long unlockedUnixTime; // optional
+    public long unlockedUnixTime;
 
     public AchievementState(string id)
     {
@@ -15,4 +15,6 @@ public class AchievementState
         unlocked = false;
         unlockedUnixTime = 0;
     }
+
+    public AchievementState() { }
 }

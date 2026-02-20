@@ -1,10 +1,17 @@
 using UnityEngine;
 
-[RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(Rigidbody), typeof(Collider))]
 public class MovingEnemy : Enemy
 {
+    [Header("Movement")]
     public float moveSpeed = 3f;
     public float moveDistance = 5f;
+
+    [Header("Obstacle Detection")]
+    [SerializeField] private float wallCheckDistance = 0.6f;
+    [SerializeField] private float wallCheckHeight = 0.6f;
+    [SerializeField] private float turnCooldown = 0.25f;
+    [SerializeField] private LayerMask obstacleMask;
 
     [Header("Animation")]
     [SerializeField] private Animator animator;
@@ -13,27 +20,29 @@ public class MovingEnemy : Enemy
     private static readonly int SpeedParam = Animator.StringToHash("Speed");
 
     private Rigidbody rb;
+    private Collider col;
 
     private Vector3 startPosition;
-    private Vector3 targetPosition;
     private bool movingRight = true;
-
-    private Vector3 lastPosition;
+    private float nextAllowedTurnTime;
 
     protected override void Start()
     {
         base.Start();
 
         rb = GetComponent<Rigidbody>();
+        col = GetComponent<Collider>();
 
         rb.useGravity = true;
-        rb.isKinematic = true;
+        rb.isKinematic = false;
         rb.interpolation = RigidbodyInterpolation.Interpolate;
+        rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
 
-        rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+        rb.constraints =
+            RigidbodyConstraints.FreezeRotationX |
+            RigidbodyConstraints.FreezeRotationZ;
 
         startPosition = rb.position;
-        lastPosition = rb.position;
 
         if (animator == null) animator = GetComponentInChildren<Animator>();
         if (modelToRotate == null && animator != null) modelToRotate = animator.transform;
@@ -41,27 +50,57 @@ public class MovingEnemy : Enemy
 
     private void FixedUpdate()
     {
-        targetPosition = movingRight
-            ? startPosition + Vector3.right * moveDistance
-            : startPosition - Vector3.right * moveDistance;
+        // 1) Patrol bounds
+        float rightLimit = startPosition.x + moveDistance;
+        float leftLimit = startPosition.x - moveDistance;
 
-        Vector3 next = Vector3.MoveTowards(rb.position, targetPosition, moveSpeed * Time.fixedDeltaTime);
-        rb.MovePosition(next);
+        if (movingRight && rb.position.x >= rightLimit) TryTurn();
+        else if (!movingRight && rb.position.x <= leftLimit) TryTurn();
 
-        float moved = Vector3.Distance(rb.position, lastPosition);
-        float speed = (Time.fixedDeltaTime > 0f) ? (moved / Time.fixedDeltaTime) : 0f;
-        if (animator != null) animator.SetFloat(SpeedParam, speed);
+        if (IsBlockedAhead())
+            TryTurn();
 
-        Vector3 delta = rb.position - lastPosition;
-        if (modelToRotate != null && delta.sqrMagnitude > 0.0001f)
+        float dir = movingRight ? 1f : -1f;
+        Vector3 v = rb.velocity;
+        v.x = dir * moveSpeed;
+        rb.velocity = v;
+
+        // 4) Animation + rotation
+        if (animator != null) animator.SetFloat(SpeedParam, Mathf.Abs(rb.velocity.x));
+
+        if (modelToRotate != null)
         {
-            float y = (delta.x >= 0f) ? 90f : -90f;
+            float y = movingRight ? 90f : -90f;
             modelToRotate.rotation = Quaternion.Euler(0f, y, 0f);
         }
+    }
 
-        lastPosition = rb.position;
+    private bool IsBlockedAhead()
+    {
+        Vector3 dir = movingRight ? Vector3.right : Vector3.left;
 
-        if (Vector3.Distance(rb.position, targetPosition) < 0.05f)
-            movingRight = !movingRight;
+        Vector3 origin = rb.position + Vector3.up * wallCheckHeight;
+
+        float halfWidth = Mathf.Max(0.15f, col.bounds.extents.x);
+        Vector3 halfExtents = new Vector3(halfWidth, 0.3f, Mathf.Max(0.15f, col.bounds.extents.z));
+
+        return Physics.BoxCast(
+            origin,
+            halfExtents,
+            dir,
+            out _,
+            Quaternion.identity,
+            wallCheckDistance,
+            obstacleMask,
+            QueryTriggerInteraction.Ignore
+        );
+    }
+
+    private void TryTurn()
+    {
+        if (Time.time < nextAllowedTurnTime) return;
+
+        movingRight = !movingRight;
+        nextAllowedTurnTime = Time.time + turnCooldown;
     }
 }

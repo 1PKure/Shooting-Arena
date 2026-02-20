@@ -27,7 +27,6 @@ public class AchievementsPopupUI : MonoBehaviour
     private readonly Queue<AchievementDefinition> _queue = new Queue<AchievementDefinition>();
     private Coroutine _runner;
     private AchievementService _service;
-
     private void Awake()
     {
         if (canvasGroup == null) canvasGroup = GetComponentInChildren<CanvasGroup>(true);
@@ -51,6 +50,8 @@ public class AchievementsPopupUI : MonoBehaviour
 
         if (_service != null)
             _service.OnAchievementUnlocked += HandleUnlocked;
+
+        Debug.Log($"[AchievementsPopupUI] Bind OK. instance={GetInstanceID()} serviceNull={(service == null)}");
     }
 
     private void HandleUnlocked(AchievementDefinition def)
@@ -61,6 +62,8 @@ public class AchievementsPopupUI : MonoBehaviour
 
         if (_runner == null)
             _runner = StartCoroutine(RunQueue());
+
+        Debug.Log($"[AchievementsPopupUI] HandleUnlocked: {def.id} (instance={GetInstanceID()})");
     }
 
     private IEnumerator RunQueue()
@@ -99,11 +102,7 @@ public class AchievementsPopupUI : MonoBehaviour
 
     private IEnumerator AnimateShow()
     {
-        gameObject.SetActive(true);
-
         float t = 0f;
-        float alphaStart = 0f;
-        float alphaEnd = 1f;
 
         if (useSlide && popupRoot != null)
             popupRoot.anchoredPosition = hiddenAnchoredPos;
@@ -115,8 +114,7 @@ public class AchievementsPopupUI : MonoBehaviour
         while (t < 1f)
         {
             t += Time.unscaledDeltaTime / Mathf.Max(0.001f, fadeInSeconds);
-            float a = Mathf.Lerp(alphaStart, alphaEnd, Mathf.SmoothStep(0f, 1f, t));
-            canvasGroup.alpha = a;
+            canvasGroup.alpha = Mathf.Lerp(0f, 1f, Mathf.SmoothStep(0f, 1f, t));
 
             if (useSlide && popupRoot != null)
             {
@@ -170,7 +168,5 @@ public class AchievementsPopupUI : MonoBehaviour
 
         if (useSlide && popupRoot != null)
             popupRoot.anchoredPosition = hiddenAnchoredPos;
-
-        gameObject.SetActive(false);
     }
 }

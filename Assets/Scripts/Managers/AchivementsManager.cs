@@ -5,13 +5,14 @@ using Systems.CentralizeEventSystem;
 
 public class AchievementsManager : MonoBehaviour
 {
+    [Header("Config")]
     [SerializeField] private AchievementDatabase database;
 
     [Header("UI")]
     [SerializeField] private AchievementsPopupUI popupUI;
+
     private CentralizeEventSystem _events;
     private AchievementService _service;
-    private bool _testUnlocked;
 
     private void Awake()
     {
@@ -19,28 +20,47 @@ public class AchievementsManager : MonoBehaviour
 
         List<AchievementState> savedStates = AchievementsStorage.LoadOrEmpty();
         _service = new AchievementService(database.definitions, savedStates);
+
+        _service.OnAchievementUnlocked += OnUnlocked;
+
+        if (popupUI != null)
+            popupUI.Bind(_service);
+        else
+            Debug.LogWarning("[AchievementsManager] Popup UI reference is NULL. No popup will be shown.");
+
+        _events.AddListener<GameEvents.ScoreChanged>(OnScoreChanged);
+        _events.AddListener<GameEvents.Victory>(OnVictory);
+        _events.AddListener<GameEvents.GameLoaded>(OnGameLoaded);
+        Debug.Log("[AchievementsManager] Service type: " + _service.GetType().FullName);
+        Debug.Log($"[AchievementsManager] Awake. instance={GetInstanceID()} popupUI={(popupUI ? popupUI.name : "NULL")}");
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Y))
+        {
+            _service.SetUnlocked("test_y");
+            Debug.Log("[AchievementsManager] Test achievement unlocked: test_y");
+        }
+
+        if (Input.GetKeyDown(KeyCode.U))
+        {
+            AchievementsStorage.Delete();
+            RecreateService();
+            Debug.Log("[AchievementsManager] Achievements save deleted + service reset.");
+        }
+    }
+    private void RecreateService()
+    {
+        var savedStates = AchievementsStorage.LoadOrEmpty();
+        _service = new AchievementService(database.definitions, savedStates);
+
         _service.OnAchievementUnlocked += OnUnlocked;
 
         if (popupUI != null)
             popupUI.Bind(_service);
 
-        _events.AddListener<GameEvents.ScoreChanged>(OnScoreChanged);
-        _events.AddListener<GameEvents.Victory>(OnVictory);
-        _events.AddListener<GameEvents.GameLoaded>(OnGameLoaded);
-    }
-    private void Update()
-    {
-        if (_testUnlocked) return;
-
-        if (Input.GetKeyDown(KeyCode.Y))
-        {
-            _testUnlocked = true;
-
-            _service.SetUnlocked("test_y");
-            AchievementsStorage.Save(_service.GetAllStates());
-
-            Debug.Log("[AchievementsManager] Test achievement unlocked: test_y");
-        }
+        Debug.Log("[AchievementsManager] Service recreated.");
     }
     private void OnDestroy()
     {
@@ -71,7 +91,7 @@ public class AchievementsManager : MonoBehaviour
 
     private void OnGameLoaded(GameData data)
     {
-
+       
     }
 
     private void OnUnlocked(AchievementDefinition def)
