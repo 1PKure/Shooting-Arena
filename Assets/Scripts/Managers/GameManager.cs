@@ -30,7 +30,8 @@ public class GameManager : MonoBehaviour
     private bool isTutorialLevel = false;
     private bool tutorialReadyToAdvance;
     [SerializeField] private GameObject nextLevel;
-    [SerializeField] private EndScreenFader endScreenFader;
+    [SerializeField] private TMP_Text tutorialMessageText;
+    [SerializeField] private string tutorialAdvanceMessage = "Ya podes avanzar";
 
     void Awake()
     {
@@ -83,12 +84,31 @@ public class GameManager : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.T) && !tutorialReadyToAdvance)
             {
                 tutorialReadyToAdvance = true;
-                if (spawner != null) spawner.StopSpawning();
-                if (nextLevel != null) nextLevel.SetActive(true);
+
+                if (spawner != null)
+                {
+                    spawner.StopSpawning();
+                    spawner.DespawnAllEnemies();
+                }
+
+                ShowTutorialMessage(tutorialAdvanceMessage);
             }
+
+
+            if (tutorialReadyToAdvance)
+                ShowTutorialMessage(tutorialAdvanceMessage);
         }
     }
+    private void ShowTutorialMessage(string msg)
+    {
+        if (tutorialMessageText == null) return;
 
+        if (!tutorialMessageText.gameObject.activeSelf)
+            tutorialMessageText.gameObject.SetActive(true);
+
+        if (tutorialMessageText.text != msg)
+            tutorialMessageText.text = msg;
+    }
     public void AddScore(int points)
     {
         if (isTutorialLevel) return;

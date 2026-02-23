@@ -56,6 +56,22 @@ public class EnemySpawner : MonoBehaviour
         GameObject enemy = SpawnAligned(selectedData.prefab, spawnPoint.position, spawnPoint.rotation);
         activeEnemies.Add(enemy);
     }
+
+    public void DespawnAllEnemies()
+    {
+        for (int i = activeEnemies.Count - 1; i >= 0; i--)
+        {
+            if (activeEnemies[i] != null)
+                Destroy(activeEnemies[i]);
+        }
+
+        activeEnemies.Clear();
+
+ 
+        var all = GameObject.FindGameObjectsWithTag("Enemy");
+        foreach (var e in all)
+            Destroy(e);
+    }
     Transform GetFreeSpawnPoint()
     {
         int tries = Mathf.Min(maxSpawnPointTries, spawnPoints.Count);

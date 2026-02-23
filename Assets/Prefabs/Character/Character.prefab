@@ -105,7 +105,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 834926296667693322}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.042000663, y: -0.007425467, z: -0.00031215846, w: -0.99909}
+  m_LocalRotation: {x: -0.04200101, y: 0.007425545, z: 0.00031216448, w: 0.99908996}
   m_LocalPosition: {x: -0.048000008, y: 0.08099997, z: -2.0550008}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -394,8 +394,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2650130548837086691}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.04200066, y: -0.007425478, z: -0.00031215866, w: -0.99909}
-  m_LocalPosition: {x: -0.048000008, y: 0.08099997, z: -2.0550008}
+  m_LocalRotation: {x: -0.04200101, y: 0.007425545, z: 0.00031216448, w: 0.99908996}
+  m_LocalPosition: {x: -0.048000336, y: 0.081000805, z: -2.0549939}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -701,6 +701,12 @@ MonoBehaviour:
     missVFXPrefab: {fileID: 0}
     shootSFX: {fileID: 8300000, guid: 3061c7b9b32d894478e4126ccce25ca3, type: 3}
     cameraShakeStrength: 0.1
+    useRaycast: 0
+    useExplosionAOE: 0
+    explosionRadius: 5
+    explosionDamage: 120
+    explosionFalloff: 1
+    explosionVFXPrefab: {fileID: 0}
   - name: Rocket
     model: {fileID: 7571591420767182991}
     damage: 50
@@ -717,6 +723,12 @@ MonoBehaviour:
     missVFXPrefab: {fileID: 0}
     shootSFX: {fileID: 8300000, guid: 8401456349c492a489ed90469e317e43, type: 3}
     cameraShakeStrength: 0.25
+    useRaycast: 0
+    useExplosionAOE: 0
+    explosionRadius: 5
+    explosionDamage: 120
+    explosionFalloff: 1
+    explosionVFXPrefab: {fileID: 0}
   currentWeaponIndex: 0
   ammoText: {fileID: 0}
   reloadHintText: {fileID: 0}

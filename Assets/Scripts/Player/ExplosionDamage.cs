@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class ExplosionDamage : MonoBehaviour
@@ -8,21 +6,40 @@ public class ExplosionDamage : MonoBehaviour
     [SerializeField] private float explosionRadius = 5f;
     [SerializeField] private int explosionDamage = 100;
 
-    [Tooltip("Qué capas pueden recibir daño (enemigos, destructibles, etc.)")]
+    [Tooltip("Which layers can receive damage (enemies, destructibles, etc.)")]
     [SerializeField] private LayerMask damageableMask;
 
-    [Tooltip("Qué capas disparan la explosión (terreno, paredes, enemigos, etc.)")]
+    [Tooltip("Which layers trigger the explosion (ground, walls, enemies, etc.)")]
     [SerializeField] private LayerMask collisionMask;
 
     [SerializeField] private GameObject explosionEffect;
 
     private bool hasExploded;
 
+    private void OnEnable()
+    {
+        hasExploded = false;
+    }
+
     public void SetDamage(int dmg) => explosionDamage = dmg;
+    public void SetRadius(float radius) => explosionRadius = radius;
+
+    public void SetMasks(LayerMask damageables, LayerMask collisions)
+    {
+        damageableMask = damageables;
+        collisionMask = collisions;
+    }
 
     private void OnCollisionEnter(Collision collision)
     {
         if (hasExploded) return;
+
+        if (collisionMask.value != 0)
+        {
+            int other = 1 << collision.gameObject.layer;
+            if ((collisionMask.value & other) == 0)
+                return;
+        }
 
         Explode();
     }
@@ -34,7 +51,12 @@ public class ExplosionDamage : MonoBehaviour
         if (explosionEffect)
             Instantiate(explosionEffect, transform.position, Quaternion.identity);
 
-        Collider[] hits = Physics.OverlapSphere(transform.position, explosionRadius, damageableMask);
+        Collider[] hits = Physics.OverlapSphere(
+            transform.position,
+            explosionRadius,
+            damageableMask,
+            QueryTriggerInteraction.Ignore
+        );
 
         for (int i = 0; i < hits.Length; i++)
         {
@@ -53,5 +75,3 @@ public class ExplosionDamage : MonoBehaviour
     }
 #endif
 }
-
-

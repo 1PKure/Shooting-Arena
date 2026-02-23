@@ -24,6 +24,13 @@ public class WeaponSystem : MonoBehaviour
         public GameObject missVFXPrefab;
         public AudioClip shootSFX;
         public float cameraShakeStrength;
+        public bool useRaycast;
+        [Header("Area Damage (Raycast)")]
+        public bool useExplosionAOE;
+        public float explosionRadius = 5f;
+        public int explosionDamage = 120;
+        public bool explosionFalloff = true;
+        public GameObject explosionVFXPrefab;
     }
 
 
@@ -37,6 +44,10 @@ public class WeaponSystem : MonoBehaviour
     [SerializeField] private Collider ownerCollider;
 
     private float nextTimeToFire = 0f;
+
+
+
+
 
     void Start()
     {
@@ -121,14 +132,9 @@ public class WeaponSystem : MonoBehaviour
     {
         weapons[currentWeaponIndex].currentAmmo--;
 
-        if (weapons[currentWeaponIndex].projectilePrefab != null)
-        {
-            ShootProjectile();
-        }
-        else
-        {
-            ShootRaycast();
-        }
+        var w = weapons[currentWeaponIndex];
+        if (w.useRaycast) ShootRaycast();
+        else ShootProjectile();
     }
 
     private void ShootRaycast()
@@ -145,24 +151,67 @@ public class WeaponSystem : MonoBehaviour
 
         if (Physics.Raycast(ray, out RaycastHit hit, w.range, ~0, QueryTriggerInteraction.Ignore))
         {
-            IDamageable target = hit.collider.GetComponentInParent<IDamageable>();
-            if (target != null && ((enemyLayer.value & (1 << hit.collider.gameObject.layer)) != 0))
+            if (!w.useExplosionAOE)
             {
-                target.TakeDamage(w.damage);
-                FeedbackManager.Instance.PlayHitFeedback(hit.point, null, w.hitVFXPrefab);
+                IDamageable target = hit.collider.GetComponentInParent<IDamageable>();
+
+                int hitLayer = hit.collider.gameObject.layer;
+                int rootLayer = hit.collider.transform.root.gameObject.layer;
+
+                bool isEnemy =
+                    ((1 << hitLayer) & enemyLayer.value) != 0 ||
+                    ((1 << rootLayer) & enemyLayer.value) != 0;
+
+                if (target != null && isEnemy)
+                    FeedbackManager.Instance.PlayHitFeedback(hit.point, null, w.hitVFXPrefab);
+                else
+                    FeedbackManager.Instance.PlayMissFeedback(hit.point, null, w.missVFXPrefab);
+
+                if (target != null && isEnemy)
+                    target.TakeDamage(w.damage);
+
+                FeedbackManager.Instance.PlayShootFeedback(w.shootSFX);
+                return;
             }
-            else
-            {
-                FeedbackManager.Instance.PlayMissFeedback(hit.point, null, w.missVFXPrefab);
-            }
+
+            if (w.explosionVFXPrefab != null)
+                Instantiate(w.explosionVFXPrefab, hit.point, Quaternion.LookRotation(hit.normal));
+
+            FeedbackManager.Instance.PlayHitFeedback(hit.point, null, w.hitVFXPrefab);
+
+            ApplyExplosionDamage(hit.point, w.explosionRadius, w.explosionDamage, enemyLayer, w.explosionFalloff);
+
+            FeedbackManager.Instance.PlayShootFeedback(w.shootSFX);
         }
         else
         {
             Vector3 missPoint = ray.origin + ray.direction * w.range;
             FeedbackManager.Instance.PlayMissFeedback(missPoint, null, w.missVFXPrefab);
+            FeedbackManager.Instance.PlayShootFeedback(w.shootSFX);
         }
+    }
 
-        FeedbackManager.Instance.PlayShootFeedback(w.shootSFX);
+    private void ApplyExplosionDamage(Vector3 center, float radius, int baseDamage, LayerMask damageableMask, bool falloff)
+    {
+        Collider[] hits = Physics.OverlapSphere(center, radius, damageableMask, QueryTriggerInteraction.Ignore);
+
+        for (int i = 0; i < hits.Length; i++)
+        {
+            IDamageable target = hits[i].GetComponentInParent<IDamageable>();
+            if (target == null) continue;
+
+            int dmg = baseDamage;
+
+            if (falloff)
+            {
+                float dist = Vector3.Distance(center, hits[i].ClosestPoint(center));
+                float t = Mathf.Clamp01(dist / radius);
+                dmg = Mathf.RoundToInt(Mathf.Lerp(baseDamage, 0f, t));
+            }
+
+            if (dmg > 0)
+                target.TakeDamage(dmg);
+        }
     }
 
 
