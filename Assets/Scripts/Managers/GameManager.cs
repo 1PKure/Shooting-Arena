@@ -23,7 +23,7 @@ public class GameManager : MonoBehaviour
 
     public static GameManager Instance;
     private bool isGameOver = false;
-    private int killGoal = 200;
+    private int killGoal = 300;
     private bool isGodMode = false;
     [SerializeField] private UIManager uiManager;
     private bool victoryTriggered = false;

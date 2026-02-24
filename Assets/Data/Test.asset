@@ -15,5 +15,5 @@ MonoBehaviour:
   id: Test
   title: Press Y
   description: You pushed the button correctly.
-  targetValue: 1
+  targetValue: 0
   icon: {fileID: 21300000, guid: d345b988a9865d74da1260a919c5bd20, type: 3}

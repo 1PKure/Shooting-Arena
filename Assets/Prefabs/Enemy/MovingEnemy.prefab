@@ -108,7 +108,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6dbc35de079ecf14a8d5424134210342, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 100
+  maxHealth: 75
   isPlayer: 0
   scoreOnDeath: 50
 --- !u!54 &-1258090205494128188
