@@ -15,30 +15,39 @@ public class AudioManager : MonoBehaviour
     private const string MusicKey = "vol_music";
     private const string SfxKey = "vol_sfx";
 
-    private const string MasterParam = "MasterVolume";
-    private const string MusicParam = "MusicVolume";
-    private const string SfxParam = "SfxVolume";
+    private const string masterParam = "MasterVolume";
+    private const string musicParam = "MusicVolume";
+    private const string sfxParam = "SfxVolume";
+
+    private float master = 1f;
+    private float music = 1f;
+    private float sfx = 1f;
 
     private void Awake()
     {
         if (Instance != null && Instance != this) { Destroy(gameObject); return; }
         Instance = this;
         DontDestroyOnLoad(gameObject);
-
-        LoadAndApply();
+        Load();
+        ApplyAll();
+        ResetAudioPrefs();
     }
 
-    private void LoadAndApply()
+
+
+    public float GetMaster() => master;
+    public float GetMusic() => music;
+    public float GetSfx() => sfx;
+    public void ResetAudioPrefs()
     {
-        float master = PlayerPrefs.GetFloat(MasterKey, 1f);
-        float music = PlayerPrefs.GetFloat(MusicKey, 1f);
-        float sfx = PlayerPrefs.GetFloat(SfxKey, 1f);
+        PlayerPrefs.DeleteKey("vol_master");
+        PlayerPrefs.DeleteKey("vol_music");
+        PlayerPrefs.DeleteKey("vol_sfx");
+        PlayerPrefs.Save();
 
-        ApplyVolume(MasterParam, master);
-        ApplyVolume(MusicParam, music);
-        ApplyVolume(SfxParam, sfx);
+        master = music = sfx = 1f;
+        ApplyAll();
     }
-
     public void PlaySFX(AudioClip clip)
     {
         if (clip == null) return;
@@ -52,31 +61,50 @@ public class AudioManager : MonoBehaviour
         sfxSource.PlayOneShot(clip);
     }
 
-    public float GetMaster() => PlayerPrefs.GetFloat(MasterKey, 1f);
-    public float GetMusic() => PlayerPrefs.GetFloat(MusicKey, 1f);
-    public float GetSfx() => PlayerPrefs.GetFloat(SfxKey, 1f);
-
-    public void SetMaster(float value)
+    public void SetMaster(float value01)
     {
-        PlayerPrefs.SetFloat(MasterKey, value);
-        ApplyVolume(MasterParam, value);
+        master = Mathf.Clamp01(value01);
+        Apply(masterParam, master);
+        PlayerPrefs.SetFloat(MasterKey, master);
     }
 
-    public void SetMusic(float value)
+    public void SetMusic(float value01)
     {
-        PlayerPrefs.SetFloat(MusicKey, value);
-        ApplyVolume(MusicParam, value);
+        music = Mathf.Clamp01(value01);
+        Apply(musicParam, music);
+        PlayerPrefs.SetFloat(MusicKey, music);
     }
 
-    public void SetSfx(float value)
+    public void SetSfx(float value01)
     {
-        PlayerPrefs.SetFloat(SfxKey, value);
-        ApplyVolume(SfxParam, value);
+        sfx = Mathf.Clamp01(value01);
+        Apply(sfxParam, sfx);
+        PlayerPrefs.SetFloat(SfxKey, sfx);
     }
 
-    private void ApplyVolume(string param, float linear01)
+    public void Save()
     {
-        float db = (linear01 <= 0.0001f) ? -80f : Mathf.Log10(linear01) * 20f;
+        PlayerPrefs.Save();
+    }
+
+    private void Load()
+    {
+        master = PlayerPrefs.GetFloat(MasterKey, 1f);
+        music = PlayerPrefs.GetFloat(MusicKey, 1f);
+        sfx = PlayerPrefs.GetFloat(SfxKey, 1f);
+    }
+
+    private void ApplyAll()
+    {
+        Apply(masterParam, master);
+        Apply(musicParam, music);
+        Apply(sfxParam, sfx);
+    }
+
+    private void Apply(string param, float value01)
+    {
+        float v = Mathf.Clamp(value01, 0.0001f, 1f);
+        float db = Mathf.Log10(v) * 20f;
         audioMixer.SetFloat(param, db);
     }
 }

@@ -58,17 +58,24 @@ public class ShooterEnemy : Enemy
     {
         if (animator != null) animator.SetTrigger(ShootParam);
 
-        GameObject projectile = Instantiate(projectilePrefab, firePoint.position, firePoint.rotation);
+        Vector3 direction = (player.position - firePoint.position).normalized;
+
+        GameObject projectile = Instantiate(projectilePrefab, firePoint.position, Quaternion.LookRotation(direction));
+        projectile.layer = LayerMask.NameToLayer("Projectile");
+
+        Collider myCol = GetComponent<Collider>();
+        Collider projCol = projectile.GetComponent<Collider>();
+        if (myCol != null && projCol != null)
+            Physics.IgnoreCollision(projCol, myCol);
+
         Rigidbody rb = projectile.GetComponent<Rigidbody>();
 
-        Vector3 direction = (player.position - firePoint.position).normalized;
-        direction += new Vector3(
-            Random.Range(-0.1f, 0.1f),
-            Random.Range(-0.1f, 0.1f),
-            Random.Range(-0.1f, 0.1f)
-        );
+        if (rb != null)
+        {
+            rb.isKinematic = false;
+            rb.velocity = direction.normalized * projectileSpeed;
+        }
 
-        rb.AddForce(direction * projectileSpeed, ForceMode.Impulse);
-        Destroy(projectile, 5f);
+        Destroy(projectile, 3f);
     }
 }

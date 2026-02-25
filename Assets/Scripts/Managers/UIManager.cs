@@ -16,6 +16,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TMP_Text reloadHintText;
     [SerializeField] private Image healthBar;
 
+    [SerializeField] private DamageOverlayUI damageOverlay;
     private float messageTimer;
     private float killTextTimer;
 
@@ -49,7 +50,10 @@ public class UIManager : MonoBehaviour
                 killText.gameObject.SetActive(false);
         }
     }
-
+    public void PlayDamageOverlay()
+    {
+        damageOverlay?.PlayHit();
+    }
     public void ShowMessage(string message)
     {
         if (messageText == null) return;
@@ -79,7 +83,10 @@ public class UIManager : MonoBehaviour
 
     public void UpdateHealth(int current, int max)
     {
-        if (healthBar != null)
-            healthBar.fillAmount = (float)current / max;
+        if (healthBar == null) return;
+
+        float safeMax = Mathf.Max(1, max);
+        float t = Mathf.Clamp01(current / safeMax);
+        healthBar.fillAmount = t;
     }
 }

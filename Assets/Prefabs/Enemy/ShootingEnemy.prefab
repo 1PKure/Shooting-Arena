@@ -83,8 +83,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   stats: {fileID: 11400000, guid: 0a4258de8af93014fa550045efe063aa, type: 2}
   detectionRange: 15
-  fireRate: 1
-  damage: 10
+  fireRate: 0.8
+  damage: 20
   projectilePrefab: {fileID: 7998187605518762405, guid: d5c9dcfb5d01d0c439a3f8de875ba6fc, type: 3}
   firePoint: {fileID: 238861485122550765}
   projectileSpeed: 10
@@ -140,7 +140,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 100
   isPlayer: 0
-  scoreOnDeath: 75
+  scoreOnDeath: 100
 --- !u!54 &-7079831380808161024
 Rigidbody:
   m_ObjectHideFlags: 0

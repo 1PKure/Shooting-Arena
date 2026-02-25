@@ -1,6 +1,7 @@
 using UnityEngine;
 using TMPro;
 using Unity.VisualScripting;
+using UnityEngine.InputSystem;
 
 public class WeaponSystem : MonoBehaviour
 {
@@ -37,11 +38,10 @@ public class WeaponSystem : MonoBehaviour
     [SerializeField] private Transform aimSource;
     [SerializeField] private Weapon[] weapons;
     [SerializeField] private int currentWeaponIndex = 0;
-    [SerializeField] private TextMeshProUGUI ammoText;
-    [SerializeField] private TextMeshProUGUI reloadHintText;
     [SerializeField] private Camera playerCamera;
     [SerializeField] private LayerMask enemyLayer;
     [SerializeField] private Collider ownerCollider;
+    [SerializeField] private PlayerInputReader inputReader;
 
     private float nextTimeToFire = 0f;
 
@@ -72,7 +72,15 @@ public class WeaponSystem : MonoBehaviour
 
         NotifyUI();
     }
+    private Ray GetAimRay()
+    {
+        if (playerCamera == null) playerCamera = Camera.main;
 
+        if (inputReader != null && inputReader.IsLookFromGamepad)
+            return playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
+
+        return playerCamera.ScreenPointToRay(Mouse.current.position.ReadValue());
+    }
     public void TryShoot()
     {
         if (Time.time >= nextTimeToFire && weapons[currentWeaponIndex].currentAmmo > 0)
@@ -141,20 +149,22 @@ public class WeaponSystem : MonoBehaviour
     {
         var w = weapons[currentWeaponIndex];
 
+        Ray ray = GetAimRay();
+
         if (w.muzzleVFXPrefab != null)
         {
             Transform muzzle = w.firePoint != null ? w.firePoint : playerCamera.transform;
             Instantiate(w.muzzleVFXPrefab, muzzle.position, muzzle.rotation);
         }
 
-        Ray ray = new Ray(aimSource.position, aimSource.forward);
 
         if (Physics.Raycast(ray, out RaycastHit hit, w.range, ~0, QueryTriggerInteraction.Ignore))
         {
             if (!w.useExplosionAOE)
             {
                 IDamageable target = hit.collider.GetComponentInParent<IDamageable>();
-
+                if (ownerCollider != null && hit.collider == ownerCollider)
+                    return;
                 int hitLayer = hit.collider.gameObject.layer;
                 int rootLayer = hit.collider.transform.root.gameObject.layer;
 
@@ -219,11 +229,13 @@ public class WeaponSystem : MonoBehaviour
     {
         var w = weapons[currentWeaponIndex];
 
-        Ray ray = new Ray(aimSource.position, aimSource.forward);
+        Ray ray = GetAimRay();
 
         Vector3 aimPoint = ray.origin + ray.direction * w.range;
         if (Physics.Raycast(ray, out RaycastHit hit, w.range, ~0, QueryTriggerInteraction.Ignore))
             aimPoint = hit.point;
+        if (ownerCollider != null && hit.collider == ownerCollider)
+            return;
 
         Vector3 dir = (aimPoint - w.firePoint.position).normalized;
         Quaternion rot = Quaternion.LookRotation(dir, Vector3.up);

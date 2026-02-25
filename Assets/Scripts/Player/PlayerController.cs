@@ -168,22 +168,19 @@ public class PlayerController : MonoBehaviour
 
     public void Rotate(Vector2 lookInput, bool isGamepadLook)
     {
-        float x;
-        float y;
-
+        float sens;
         if (isGamepadLook)
         {
-            x = lookInput.x * playerData.gamepadLookSensitivity * Time.deltaTime;
-            y = lookInput.y * playerData.gamepadLookSensitivity * Time.deltaTime;
+            sens = playerData.gamepadLookSensitivity;
         }
         else
         {
-            float sens = playerData.mouseSensitivity * Time.deltaTime;
+            sens = playerData.mouseSensitivity;
             if (!isFirstPerson) sens *= thirdPersonSensitivityMultiplier;
-
-            x = lookInput.x * sens;
-            y = lookInput.y * sens;
         }
+
+        float x = lookInput.x * sens * Time.deltaTime;
+        float y = lookInput.y * sens * Time.deltaTime;
 
         mouseX += x;
         mouseY -= y;
@@ -192,8 +189,14 @@ public class PlayerController : MonoBehaviour
         float maxPitch = isFirstPerson ? firstPersonMaxPitch : thirdPersonMaxPitch;
         mouseY = Mathf.Clamp(mouseY, minPitch, maxPitch);
 
-        cameraHolder.localRotation = Quaternion.Euler(mouseY, 0f, 0f);
-        transform.rotation = Quaternion.Euler(0f, mouseX, 0f);
+        mouseX = Mathf.Repeat(mouseX, 360f);
+
+        Quaternion targetPitch = Quaternion.Euler(mouseY, 0f, 0f);
+        Quaternion targetYaw = Quaternion.Euler(0f, mouseX, 0f);
+
+        float smooth = 20f;
+        cameraHolder.localRotation = Quaternion.Slerp(cameraHolder.localRotation, targetPitch, Time.deltaTime * smooth);
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetYaw, Time.deltaTime * smooth);
     }
     public void ResetPlayer()
     {

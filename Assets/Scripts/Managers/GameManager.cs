@@ -7,31 +7,42 @@ public class GameManager : MonoBehaviour
 {
     public enum Difficulty { Easy, Medium, Hard }
 
+    [Header("Panels")]
     [SerializeField] private GameObject victoryPanel;
+    [SerializeField] private GameObject gameOverPanel;
+
+
+    [Header("UI")]
+    [SerializeField] private TMP_Text scoreText;
+    [SerializeField] private TMP_Text timeText;
+    [SerializeField] private TMP_Text tutorialMessageText;
+    [SerializeField] private EndScreenUI victoryEndUI;
+    [SerializeField] private EndScreenUI gameOverEndUI;
+
+    [Header("Difficulty")]
     [SerializeField] private Difficulty currentDifficulty;
     [SerializeField] private EnemySpawner spawner;
 
-    [SerializeField] private int score = 0;
-    [SerializeField] private TMP_Text scoreText;
+    [Header("Game Rules")]
+    [SerializeField] private float gameTime = 300f;
+    [SerializeField] private int easyTargetScore = 200;
+    [SerializeField] private int mediumTargetScore = 350;
+    [SerializeField] private int hardTargetScore = 500;
 
-    [SerializeField] private GameObject gameOverPanel;
-    [SerializeField] private TMP_Text finalScoreText;
-
-    [SerializeField] private float gameTime = 60f;
     private float remainingTime;
-    [SerializeField] private TMP_Text timeText;
-
+    private int score;
+    private int targetScore;
+    private bool isGodMode;
     public static GameManager Instance;
     private bool isGameOver = false;
-    private int killGoal = 300;
-    private bool isGodMode = false;
-    [SerializeField] private UIManager uiManager;
     private bool victoryTriggered = false;
     private bool isTutorialLevel = false;
     private bool tutorialReadyToAdvance;
-    [SerializeField] private GameObject nextLevel;
-    [SerializeField] private TMP_Text tutorialMessageText;
+
     [SerializeField] private string tutorialAdvanceMessage = "Ya podes avanzar";
+
+    private EndScreenUI victoryUI;
+    private EndScreenUI gameOverUI;
 
     void Awake()
     {
@@ -47,24 +58,35 @@ public class GameManager : MonoBehaviour
     }
     void Start()
     {
+        LoadGodMode();
         Time.timeScale = 1f;
         isGameOver = false;
+        victoryTriggered = false;
         remainingTime = gameTime;
         score = 0;
-
         isTutorialLevel = SceneManager.GetActiveScene().name == "Training";
+        if (victoryEndUI == null && victoryPanel != null)
+            victoryEndUI = victoryPanel.GetComponentInChildren<EndScreenUI>(true);
 
+        if (gameOverEndUI == null && gameOverPanel != null)
+            gameOverEndUI = gameOverPanel.GetComponentInChildren<EndScreenUI>(true);
         if (!isTutorialLevel)
         {
             int storedDiff = PlayerPrefs.GetInt("SelectedDifficulty", 1);
             currentDifficulty = (Difficulty)storedDiff;
-            if (spawner != null) spawner.SetDifficulty(currentDifficulty);
+
+            ApplyDifficultySettings();
+
+            if (spawner != null)
+                spawner.SetDifficulty(currentDifficulty);
+        }
+        else
+        {
+            targetScore = int.MaxValue;
         }
 
-        if (victoryPanel != null) victoryPanel.SetActive(false);
-        if (gameOverPanel != null) gameOverPanel.SetActive(false);
-
         UpdateScoreUI();
+        UpdateTimeUI();
     }
 
     void Update()
@@ -99,6 +121,62 @@ public class GameManager : MonoBehaviour
                 ShowTutorialMessage(tutorialAdvanceMessage);
         }
     }
+
+    private void ApplyDifficultySettings()
+    {
+        gameTime = 300f;
+
+        switch (currentDifficulty)
+        {
+            case Difficulty.Easy: targetScore = easyTargetScore; break;
+            case Difficulty.Medium: targetScore = mediumTargetScore; break;
+            case Difficulty.Hard: targetScore = hardTargetScore; break;
+        }
+    }
+
+
+    public void AddScore(int points)
+    {
+        if (isTutorialLevel) return;
+        if (isGameOver) return;
+
+        score += points;
+        UpdateScoreUI();
+
+        var events = Code.Service.ServiceProvider.Instance
+            .GetService<Systems.CentralizeEventSystem.CentralizeEventSystem>();
+        events?.Get<GameEvents.ScoreChanged>()?.Invoke(score);
+
+        if (score >= targetScore)
+            Victory();
+    }
+
+    public void GameOver()
+    {
+        if (isGameOver) return;
+
+        SetGameEndState(true, gameOverPanel);
+
+        gameOverEndUI?.SetData(score, remainingTime);
+
+        var events = Code.Service.ServiceProvider.Instance.GetService<Systems.CentralizeEventSystem.CentralizeEventSystem>();
+        events?.Get<GameEvents.GameOver>()?.Invoke(score);
+        FeedbackManager.Instance.PlayLoseFeedback();
+    }
+
+    private void HandleVictory()
+    {
+        if (victoryTriggered || isGameOver) return;
+
+        victoryTriggered = true;
+        SetGameEndState(true, victoryPanel);
+
+        victoryEndUI?.SetData(score, remainingTime);
+
+        var events = Code.Service.ServiceProvider.Instance.GetService<Systems.CentralizeEventSystem.CentralizeEventSystem>();
+        events?.Get<GameEvents.Victory>()?.Invoke(score);
+        FeedbackManager.Instance.PlayWinFeedback();
+    }
     private void ShowTutorialMessage(string msg)
     {
         if (tutorialMessageText == null) return;
@@ -109,21 +187,6 @@ public class GameManager : MonoBehaviour
         if (tutorialMessageText.text != msg)
             tutorialMessageText.text = msg;
     }
-    public void AddScore(int points)
-    {
-        if (isTutorialLevel) return;
-        if (isGameOver) return;
-
-        score += points;
-        UpdateScoreUI();
-        var events = Code.Service.ServiceProvider.Instance.GetService<Systems.CentralizeEventSystem.CentralizeEventSystem>();
-        events?.Get<GameEvents.ScoreChanged>()?.Invoke(score);
-        if (!isTutorialLevel && score >= killGoal)
-        {
-            Victory();
-        }
-    }
-
     void UpdateScoreUI()
     {
         if (scoreText != null)
@@ -142,20 +205,6 @@ public class GameManager : MonoBehaviour
         }
         var events = Code.Service.ServiceProvider.Instance.GetService<Systems.CentralizeEventSystem.CentralizeEventSystem>();
         events?.Get<GameEvents.TimeChanged>()?.Invoke(remainingTime);
-    }
-
-    public void GameOver()
-    {
-        if (isGameOver) return;
-
-        SetGameEndState(true, gameOverPanel);
-
-        if (finalScoreText != null)
-            finalScoreText.text = "Final Score: " + score.ToString();
-
-        var events = Code.Service.ServiceProvider.Instance.GetService<Systems.CentralizeEventSystem.CentralizeEventSystem>();
-        events?.Get<GameEvents.GameOver>()?.Invoke(score);
-        FeedbackManager.Instance.PlayLoseFeedback();
     }
 
     public void RestartGame()
@@ -234,16 +283,6 @@ public class GameManager : MonoBehaviour
     public void DeleteSave() => SaveSystem.DeleteSave();
     public bool IsGodMode() => isGodMode;
 
-    private void HandleVictory()
-    {
-        if (victoryTriggered || isGameOver) return;
-
-        victoryTriggered = true;
-        SetGameEndState(true, victoryPanel);
-        var events = Code.Service.ServiceProvider.Instance.GetService<Systems.CentralizeEventSystem.CentralizeEventSystem>();
-        events?.Get<GameEvents.Victory>()?.Invoke(score);
-        FeedbackManager.Instance.PlayWinFeedback();
-    }
     private void SetGameEndState(bool showPanel, GameObject panel)
     {
         isGameOver = true;
@@ -281,5 +320,17 @@ public class GameManager : MonoBehaviour
     public bool IsTutorialCompleted()
     {
         return tutorialReadyToAdvance;
+    }
+
+    public void SetGodMode(bool enabled)
+    {
+        isGodMode = enabled;
+        PlayerPrefs.SetInt("GodMode", enabled ? 1 : 0);
+        PlayerPrefs.Save();
+    }
+
+    private void LoadGodMode()
+    {
+        isGodMode = PlayerPrefs.GetInt("GodMode", 0) == 1;
     }
 }

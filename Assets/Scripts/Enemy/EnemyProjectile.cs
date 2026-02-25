@@ -1,21 +1,43 @@
 using UnityEngine;
 
+[RequireComponent(typeof(Collider))]
 public class EnemyProjectile : MonoBehaviour
 {
-    public int damage = 10;
+    [SerializeField] private int damage = 10;
 
-    void OnCollisionEnter(Collision collision)
+    [Header("Destroy Layer")]
+    [SerializeField] private LayerMask destroyOnHitMask;
+
+    private void Awake()
     {
-        if (collision.gameObject.CompareTag("Player"))
+        var col = GetComponent<Collider>();
+        col.isTrigger = true;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player"))
         {
-            
-            Health playerHealth = collision.gameObject.GetComponent<Health>();
+            if (GameManager.Instance != null && GameManager.Instance.IsGodMode())
+            {
+                Destroy(gameObject);
+                return;
+            }
+
+            Health playerHealth = other.GetComponent<Health>();
             if (playerHealth != null)
             {
                 playerHealth.TakeDamage(damage);
+                UIManager.Instance?.PlayDamageOverlay();
             }
+
+            Destroy(gameObject);
+            return;
         }
 
-        Destroy(gameObject);
+        if (((1 << other.gameObject.layer) & destroyOnHitMask) != 0)
+        {
+            Destroy(gameObject);
+        }
     }
 }

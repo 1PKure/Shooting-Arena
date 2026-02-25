@@ -9,6 +9,7 @@ public class PlayerInputManager : MonoBehaviour
     [SerializeField] private WeaponSystem weaponSystem;
     [SerializeField] private PauseManager pauseManager;
     [SerializeField] private CameraController cameraController;
+    [SerializeField] private PlayerAimController aimController;
     private int lastToggleCount;
     void Update()
     {
@@ -23,9 +24,8 @@ public class PlayerInputManager : MonoBehaviour
         if (inputReader.JumpPressed)
             playerController.Jump();
 
-        if (inputReader.ToggleCameraCount != lastToggleCount)
+        if (inputReader.ToggleCameraPressed)
         {
-            lastToggleCount = inputReader.ToggleCameraCount;
             cameraController.ToggleMode();
         }
 
@@ -43,6 +43,9 @@ public class PlayerInputManager : MonoBehaviour
 
         if (inputReader.SwitchWeaponPressed)
             weaponSystem.SwitchWeapon();
+
+        if (aimController != null)
+            aimController.SetAim(inputReader.AimHeld);
 
         if (inputReader.WeaponKeys[0]) weaponSystem.EquipWeapon(0);
         if (inputReader.WeaponKeys[1]) weaponSystem.EquipWeapon(1);

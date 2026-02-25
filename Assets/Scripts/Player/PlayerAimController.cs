@@ -19,6 +19,7 @@ public class PlayerAimController : MonoBehaviour
 
     private int aimLayerIndex = -1;
 
+    private bool aimInput;
     void Awake()
     {
         if (animator == null)
@@ -30,13 +31,15 @@ public class PlayerAimController : MonoBehaviour
         if (aimCamera == null)
             aimCamera = Camera.main;
     }
-
-    void Update()
+    public void SetAim(bool isAiming)
     {
-        bool isAiming = Input.GetMouseButton(1);
+        aimInput = isAiming;
+    }
 
+    private void Update()
+    {
         float current = (aimLayerIndex >= 0) ? animator.GetLayerWeight(aimLayerIndex) : 0f;
-        float target = isAiming ? 1f : 0f;
+        float target = aimInput ? 1f : 0f;
         float next = Mathf.MoveTowards(current, target, aimBlendSpeed * Time.deltaTime);
 
         if (aimLayerIndex >= 0)

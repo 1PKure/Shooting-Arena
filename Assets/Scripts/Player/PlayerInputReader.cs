@@ -18,6 +18,7 @@ public class PlayerInputReader : MonoBehaviour
     public bool InteractPressed { get; private set; }
     public bool ToggleCameraPressed { get; private set; }
     public int ToggleCameraCount { get; private set; }
+    public bool AimHeld { get; private set; }
     private float lastToggleCameraTime;
     private const float ToggleCameraCooldown = 0.20f;
     private PlayerControls controls;
@@ -25,6 +26,8 @@ public class PlayerInputReader : MonoBehaviour
     {
         controls = new PlayerControls();
         controls.Gameplay.Pause.performed += _ => PausePressed = true;
+        controls.Gameplay.Aim.performed += _ => AimHeld = true;
+        controls.Gameplay.Aim.canceled += _ => AimHeld = false;
         controls.Gameplay.Move.performed += ctx => MoveInput = ctx.ReadValue<Vector2>();
         controls.Gameplay.Move.canceled += _ => MoveInput = Vector2.zero;
         controls.Gameplay.ToggleCamera.performed += _ =>

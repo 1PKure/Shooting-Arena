@@ -4,7 +4,7 @@ using UnityEngine.EventSystems;
 public class UISelectionHighlighter : MonoBehaviour
 {
     [SerializeField] private RectTransform frame;
-    [SerializeField] private Vector2 padding = new Vector2(20f, 12f);
+    //[SerializeField] private Vector2 padding = new Vector2(20f, 12f);
     [SerializeField] private bool hideWhenNoSelection = true;
 
     private void LateUpdate()
@@ -30,6 +30,6 @@ public class UISelectionHighlighter : MonoBehaviour
 
         frame.position = rt.position;
 
-        frame.sizeDelta = rt.sizeDelta + padding;
+        //frame.sizeDelta = rt.sizeDelta + padding;
     }
 }
