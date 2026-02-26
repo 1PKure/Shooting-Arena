@@ -65,6 +65,8 @@ public class GameManager : MonoBehaviour
         remainingTime = gameTime;
         score = 0;
         isTutorialLevel = SceneManager.GetActiveScene().name == "Training";
+        int storedDiff = PlayerPrefs.GetInt("SelectedDifficulty", 1);
+        currentDifficulty = (Difficulty)storedDiff;
         if (victoryEndUI == null && victoryPanel != null)
             victoryEndUI = victoryPanel.GetComponentInChildren<EndScreenUI>(true);
 
@@ -72,17 +74,20 @@ public class GameManager : MonoBehaviour
             gameOverEndUI = gameOverPanel.GetComponentInChildren<EndScreenUI>(true);
         if (!isTutorialLevel)
         {
-            int storedDiff = PlayerPrefs.GetInt("SelectedDifficulty", 1);
-            currentDifficulty = (Difficulty)storedDiff;
-
             ApplyDifficultySettings();
-
-            if (spawner != null)
-                spawner.SetDifficulty(currentDifficulty);
+            remainingTime = gameTime;
         }
         else
         {
+            remainingTime = 0f;
             targetScore = int.MaxValue;
+        }
+        if (spawner != null)
+        {
+            spawner.SetDifficulty(currentDifficulty);
+
+            if (isTutorialLevel)
+                spawner.SetTrainingMode(true);
         }
 
         UpdateScoreUI();
@@ -96,10 +101,16 @@ public class GameManager : MonoBehaviour
         if (!isTutorialLevel)
         {
             remainingTime -= Time.deltaTime;
-            UpdateTimeUI();
 
-            if (remainingTime <= 0)
+            if (remainingTime <= 0f)
+            {
+                remainingTime = 0f;
+                UpdateTimeUI();       
                 GameOver();
+                return;
+            }
+
+            UpdateTimeUI();
         }
         else
         {
@@ -137,7 +148,6 @@ public class GameManager : MonoBehaviour
 
     public void AddScore(int points)
     {
-        if (isTutorialLevel) return;
         if (isGameOver) return;
 
         score += points;
@@ -147,7 +157,7 @@ public class GameManager : MonoBehaviour
             .GetService<Systems.CentralizeEventSystem.CentralizeEventSystem>();
         events?.Get<GameEvents.ScoreChanged>()?.Invoke(score);
 
-        if (score >= targetScore)
+        if (!isTutorialLevel && score >= targetScore)
             Victory();
     }
 
@@ -199,12 +209,22 @@ public class GameManager : MonoBehaviour
     {
         if (timeText != null)
         {
-            int minutes = Mathf.FloorToInt(remainingTime / 60);
-            int seconds = Mathf.FloorToInt(remainingTime % 60);
-            timeText.text = string.Format("Time: {0:00}:{1:00}", minutes, seconds);
+            if (isTutorialLevel)
+            {
+                timeText.text = "Time: --:--";
+            }
+            else
+            {
+                float t = Mathf.Max(0f, remainingTime);
+                int minutes = Mathf.FloorToInt(t / 60f);
+                int seconds = Mathf.FloorToInt(t % 60f);
+                timeText.text = string.Format("Time: {0:00}:{1:00}", minutes, seconds);
+            }
         }
-        var events = Code.Service.ServiceProvider.Instance.GetService<Systems.CentralizeEventSystem.CentralizeEventSystem>();
-        events?.Get<GameEvents.TimeChanged>()?.Invoke(remainingTime);
+
+        var events = Code.Service.ServiceProvider.Instance
+            .GetService<Systems.CentralizeEventSystem.CentralizeEventSystem>();
+        events?.Get<GameEvents.TimeChanged>()?.Invoke(Mathf.Max(0f, remainingTime));
     }
 
     public void RestartGame()

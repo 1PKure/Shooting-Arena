@@ -91,6 +91,20 @@ public class AchievementService
             UnlockInternal(def, st);
     }
 
+    public void SetProgress(string id, int value)
+    {
+        if (string.IsNullOrWhiteSpace(id)) return;
+        if (!_defsById.TryGetValue(id, out var def)) return;
+        if (!_stateById.TryGetValue(id, out var st)) return;
+        if (st.unlocked) return;
+
+        int target = Mathf.Max(1, def.targetValue);
+        st.currentValue = Mathf.Clamp(value, 0, target);
+
+        if (st.currentValue >= target)
+            UnlockInternal(def, st);
+    }
+
     public void SetUnlocked(string id)
     {
         if (string.IsNullOrWhiteSpace(id)) return;

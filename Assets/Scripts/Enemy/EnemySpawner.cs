@@ -181,4 +181,21 @@ public class EnemySpawner : MonoBehaviour
 
         return new Bounds(go.transform.position, Vector3.zero);
     }
+
+    public void SetTrainingMode(bool enabled)
+    {
+        if (!enabled) return;
+
+        maxEnemies = 1;
+
+        spawnInterval = Mathf.Max(0.15f, spawnInterval);
+
+        allowSpawn = true;
+        nextSpawnTime = Time.time + 0.05f;
+    }
+
+    public void ResumeSpawning()
+    {
+        allowSpawn = true;
+    }
 }

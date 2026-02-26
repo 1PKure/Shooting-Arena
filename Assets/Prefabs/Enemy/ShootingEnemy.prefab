@@ -140,7 +140,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 100
   isPlayer: 0
-  scoreOnDeath: 100
+  scoreOnDeath: 70
 --- !u!54 &-7079831380808161024
 Rigidbody:
   m_ObjectHideFlags: 0

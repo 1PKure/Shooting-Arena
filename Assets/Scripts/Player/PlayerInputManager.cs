@@ -7,7 +7,6 @@ public class PlayerInputManager : MonoBehaviour
     [SerializeField] private PlayerInputReader inputReader;
     [SerializeField] private PlayerController playerController;
     [SerializeField] private WeaponSystem weaponSystem;
-    [SerializeField] private PauseManager pauseManager;
     [SerializeField] private CameraController cameraController;
     [SerializeField] private PlayerAimController aimController;
     private int lastToggleCount;
@@ -29,8 +28,6 @@ public class PlayerInputManager : MonoBehaviour
             cameraController.ToggleMode();
         }
 
-        if (inputReader.PausePressed)
-            pauseManager.TogglePause();
 
         if (weaponSystem == null) return;
 

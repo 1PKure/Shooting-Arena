@@ -33,7 +33,6 @@ public class MovingEnemy : Enemy
         rb = GetComponent<Rigidbody>();
         col = GetComponent<Collider>();
 
-        rb.useGravity = true;
         rb.isKinematic = false;
         rb.interpolation = RigidbodyInterpolation.Interpolate;
         rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
@@ -50,7 +49,6 @@ public class MovingEnemy : Enemy
 
     private void FixedUpdate()
     {
-        // 1) Patrol bounds
         float rightLimit = startPosition.x + moveDistance;
         float leftLimit = startPosition.x - moveDistance;
 
@@ -63,9 +61,9 @@ public class MovingEnemy : Enemy
         float dir = movingRight ? 1f : -1f;
         Vector3 v = rb.velocity;
         v.x = dir * moveSpeed;
+        v.z = 0f;
         rb.velocity = v;
 
-        // 4) Animation + rotation
         if (animator != null) animator.SetFloat(SpeedParam, Mathf.Abs(rb.velocity.x));
 
         if (modelToRotate != null)

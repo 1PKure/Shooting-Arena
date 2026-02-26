@@ -11,6 +11,12 @@ public class AchievementsManager : MonoBehaviour
     [Header("UI")]
     [SerializeField] private AchievementsPopupUI popupUI;
 
+    [Header("Pentakill (kill_5)")]
+    [SerializeField] private string pentakillId = "kill_5";
+    [SerializeField] private int pentakillKillsRequired = 5;
+    [SerializeField] private float pentakillWindowSeconds = 10f;
+
+    private readonly Queue<float> _pentakillKillTimes = new Queue<float>();
     private CentralizeEventSystem _events;
     private AchievementService _service;
 
@@ -77,12 +83,29 @@ public class AchievementsManager : MonoBehaviour
 
     private void OnScoreChanged(int newScore)
     {
-        _service.AddProgress("kill_5", 1);
+        RegisterPentakillKill();
         _service.AddProgress("kill_50", 1);
 
         AchievementsStorage.Save(_service.GetAllStates());
     }
+    private void RegisterPentakillKill()
+    {
+        if (_service.IsUnlocked(pentakillId))
+            return;
 
+        float now = Time.time;
+        _pentakillKillTimes.Enqueue(now);
+
+        while (_pentakillKillTimes.Count > 0 && (now - _pentakillKillTimes.Peek()) > pentakillWindowSeconds)
+            _pentakillKillTimes.Dequeue();
+
+        int streak = _pentakillKillTimes.Count;
+
+        _service.SetProgress(pentakillId, streak);
+
+        if (_service.IsUnlocked(pentakillId))
+            _pentakillKillTimes.Clear();
+    }
     private void OnVictory(int finalScore)
     {
         _service.SetUnlocked("first_win");

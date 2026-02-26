@@ -1,24 +1,37 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
+using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 
 public class PauseManager : MonoBehaviour
 {
     public static PauseManager Instance;
 
+    [Header("Panels")]
     [SerializeField] private GameObject pausePanel;
     [SerializeField] private GameObject audioPanel;
     [SerializeField] private GameObject settingsPanel;
 
-    private bool isPaused = false;
+    [Header("Input")]
+    [SerializeField] private PlayerInput playerInput;
+    [SerializeField] private string gameplayActionMap = "Gameplay";
+    [SerializeField] private string uiActionMap = "UI";
+    [SerializeField] private string pauseActionName = "Pause";
+
+    [Header("UI Selection (optional)")]
+    [SerializeField] private UISelectionHighlighter selectionHighlighter;
+    [SerializeField] private GameObject pauseFirstSelected;
+    [SerializeField] private GameObject audioFirstSelected;
+    [SerializeField] private GameObject settingsFirstSelected;
+
+    private bool isPaused;
     public bool IsPaused => isPaused;
+
     private PlayerController playerController;
 
     private void Awake()
     {
-        if (Instance == null)
-            Instance = this;
-        else
-            Destroy(gameObject);
+        if (Instance == null) Instance = this;
+        else Destroy(gameObject);
     }
 
     private void Start()
@@ -26,48 +39,151 @@ public class PauseManager : MonoBehaviour
         settingsPanel.SetActive(false);
         pausePanel.SetActive(false);
         audioPanel.SetActive(false);
+
         playerController = FindObjectOfType<PlayerController>();
+
+        if (playerInput == null)
+            playerInput = FindObjectOfType<PlayerInput>();
+
+        BindPauseAction();
     }
 
-    private void Update()
+    private void OnEnable()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
+        BindPauseAction();
+    }
+
+    private void OnDisable()
+    {
+        UnbindPauseAction();
+    }
+
+    private void BindPauseAction()
+    {
+        if (playerInput == null) return;
+
+        var pauseAction = playerInput.actions.FindAction(pauseActionName, true);
+        pauseAction.performed -= OnPausePerformed;
+        pauseAction.performed += OnPausePerformed;
+    }
+
+    private void UnbindPauseAction()
+    {
+        if (playerInput == null) return;
+
+        var pauseAction = playerInput.actions.FindAction(pauseActionName, true);
+        pauseAction.performed -= OnPausePerformed;
+    }
+
+    private void OnPausePerformed(InputAction.CallbackContext ctx)
+    {
+        if (isPaused)
         {
-            if (audioPanel.activeSelf)
-                ReturnToPauseMenu();
-            else if (settingsPanel.activeSelf)
-                ReturnToPauseMenuFromSettings();
-            else
-                TogglePause();
+            if (audioPanel.activeSelf) ReturnToPauseMenu();
+            else if (settingsPanel.activeSelf) ReturnToPauseMenuFromSettings();
+            else ClosePause();
+        }
+        else
+        {
+            OpenPause();
         }
     }
 
-    public void TogglePause()
+    private void OpenPause()
     {
-        isPaused = !isPaused;
-        Time.timeScale = isPaused ? 0f : 1f;
-        pausePanel.SetActive(isPaused);
-        Cursor.lockState = isPaused ? CursorLockMode.None : CursorLockMode.Locked;
-        Cursor.visible = isPaused;
+        isPaused = true;
+        Time.timeScale = 0f;
+
+        pausePanel.SetActive(true);
+        audioPanel.SetActive(false);
+        settingsPanel.SetActive(false);
+
+        if (playerInput != null)
+            playerInput.SwitchCurrentActionMap(uiActionMap);
+
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
 
         if (playerController != null)
-            playerController.enabled = !isPaused;
+            playerController.enabled = false;
+
+        if (selectionHighlighter != null)
+            selectionHighlighter.SetUIOpen(true);
+
+        SetSelected(pauseFirstSelected);
+    }
+
+    private void ClosePause()
+    {
+        isPaused = false;
+        Time.timeScale = 1f;
+
+        pausePanel.SetActive(false);
+        audioPanel.SetActive(false);
+        settingsPanel.SetActive(false);
+
+        if (EventSystem.current != null)
+            EventSystem.current.SetSelectedGameObject(null);
+
+        if (selectionHighlighter != null)
+            selectionHighlighter.SetUIOpen(false);
+
+        if (playerInput != null)
+            playerInput.SwitchCurrentActionMap(gameplayActionMap);
+
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+
+        if (playerController != null)
+            playerController.enabled = true;
     }
 
     public void OpenAudioPanel()
     {
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
         pausePanel.SetActive(false);
         audioPanel.SetActive(true);
+        settingsPanel.SetActive(false);
+
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
+        SetSelected(audioFirstSelected);
     }
 
     public void ReturnToPauseMenu()
     {
+        audioPanel.SetActive(false);
+        settingsPanel.SetActive(false);
+        pausePanel.SetActive(true);
+
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
+
+        SetSelected(pauseFirstSelected);
+    }
+
+    public void OpenSettingsPanel()
+    {
+        pausePanel.SetActive(false);
+        audioPanel.SetActive(false);
+        settingsPanel.SetActive(true);
+
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
+        SetSelected(settingsFirstSelected);
+    }
+
+    public void ReturnToPauseMenuFromSettings()
+    {
+        settingsPanel.SetActive(false);
         audioPanel.SetActive(false);
         pausePanel.SetActive(true);
+
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
+        SetSelected(pauseFirstSelected);
     }
 
     public void QuitGame()
@@ -78,19 +194,15 @@ public class PauseManager : MonoBehaviour
 #endif
     }
 
-    public void OpenSettingsPanel()
+    private void SetSelected(GameObject go)
     {
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
-        pausePanel.SetActive(false);
-        settingsPanel.SetActive(true);
+        if (EventSystem.current == null || go == null) return;
+        EventSystem.current.SetSelectedGameObject(null);
+        EventSystem.current.SetSelectedGameObject(go);
     }
 
-    public void ReturnToPauseMenuFromSettings()
+    public void Resume()
     {
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
-        settingsPanel.SetActive(false);
-        pausePanel.SetActive(true);
+        ClosePause();
     }
 }

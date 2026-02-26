@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: PlayerData
   m_EditorClassIdentifier: 
   maxHealth: 100
-  moveSpeed: 5
-  baseSpeed: 5
+  moveSpeed: 6
+  baseSpeed: 6
   mouseSensitivity: 0.2
   gamepadLookSensitivity: 180
   sprintMultiplier: 1.6

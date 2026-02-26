@@ -75,6 +75,12 @@ public class Projectile : MonoBehaviour
 
         if (isEnemy)
         {
+            Rigidbody otherRb = other.attachedRigidbody;
+            if (otherRb != null && !otherRb.isKinematic)
+            {
+                otherRb.AddForce(collision.impulse, ForceMode.Impulse);
+                otherRb.angularVelocity = Vector3.zero;
+            }
             IDamageable target = other.GetComponentInParent<IDamageable>();
 
             if (target != null)
