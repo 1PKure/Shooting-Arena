@@ -27,10 +27,12 @@ public class CameraController : MonoBehaviour
 
     private void Update()
     {
+        /*
         if (Input.GetKeyDown(KeyCode.C))
         {
             ToggleMode();
         }
+        */
     }
 
     public void ToggleMode()

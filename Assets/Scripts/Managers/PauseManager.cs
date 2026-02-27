@@ -23,6 +23,7 @@ public class PauseManager : MonoBehaviour
     [SerializeField] private GameObject audioFirstSelected;
     [SerializeField] private GameObject settingsFirstSelected;
 
+    [SerializeField] private CrosshairUI crosshair;
     private bool isPaused;
     public bool IsPaused => isPaused;
 
@@ -94,6 +95,7 @@ public class PauseManager : MonoBehaviour
         isPaused = true;
         Time.timeScale = 0f;
 
+        if (crosshair != null) crosshair.Show(false);
         pausePanel.SetActive(true);
         audioPanel.SetActive(false);
         settingsPanel.SetActive(false);
@@ -121,6 +123,7 @@ public class PauseManager : MonoBehaviour
         pausePanel.SetActive(false);
         audioPanel.SetActive(false);
         settingsPanel.SetActive(false);
+        if (crosshair != null) crosshair.Show(true);
 
         if (EventSystem.current != null)
             EventSystem.current.SetSelectedGameObject(null);

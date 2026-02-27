@@ -75,11 +75,7 @@ public class WeaponSystem : MonoBehaviour
     private Ray GetAimRay()
     {
         if (playerCamera == null) playerCamera = Camera.main;
-
-        if (inputReader != null && inputReader.IsLookFromGamepad)
-            return playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
-
-        return playerCamera.ScreenPointToRay(Mouse.current.position.ReadValue());
+        return playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
     }
     public void TryShoot()
     {

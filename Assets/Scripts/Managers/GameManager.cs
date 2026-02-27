@@ -29,6 +29,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private int mediumTargetScore = 350;
     [SerializeField] private int hardTargetScore = 500;
 
+    [SerializeField] private CrosshairUI crosshair;
     private float remainingTime;
     private int score;
     private int targetScore;
@@ -165,6 +166,7 @@ public class GameManager : MonoBehaviour
     {
         if (isGameOver) return;
 
+        if (crosshair != null) crosshair.Show(false);
         SetGameEndState(true, gameOverPanel);
 
         gameOverEndUI?.SetData(score, remainingTime);
@@ -179,6 +181,7 @@ public class GameManager : MonoBehaviour
         if (victoryTriggered || isGameOver) return;
 
         victoryTriggered = true;
+        if (crosshair != null) crosshair.Show(false);
         SetGameEndState(true, victoryPanel);
 
         victoryEndUI?.SetData(score, remainingTime);

@@ -977,6 +977,7 @@ GameObject:
   - component: {fileID: 1602289847}
   - component: {fileID: 1602289846}
   - component: {fileID: 1602289850}
+  - component: {fileID: 1602289851}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -1083,6 +1084,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   firstSelected: {fileID: 943781609}
+--- !u!114 &1602289851
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1602289845}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f4f77da7c7eae544864ef45821a9902, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1690516174
 GameObject:
   m_ObjectHideFlags: 0
@@ -1114,6 +1127,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   frame: {fileID: 631935010}
   hideWhenNoSelection: 1
+  autoDetectUIOpen: 1
+  requireSelectionToShow: 1
+  requireUIContext: 1
+  onlyForGamepad: 1
+  gamepadGraceTime: 0.25
 --- !u!4 &1690516176
 Transform:
   m_ObjectHideFlags: 0

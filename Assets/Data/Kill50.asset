@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Kill50
   m_EditorClassIdentifier: 
   id: kill_50
-  title: Rambo?
-  description: Wow.. you really are insane
+  title: 50 kills
+  description: Rambo is that you?
   targetValue: 50
   icon: {fileID: 21300000, guid: d345b988a9865d74da1260a919c5bd20, type: 3}

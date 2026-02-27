@@ -30,14 +30,6 @@ public class PlayerInputReader : MonoBehaviour
         controls.Gameplay.Aim.canceled += _ => AimHeld = false;
         controls.Gameplay.Move.performed += ctx => MoveInput = ctx.ReadValue<Vector2>();
         controls.Gameplay.Move.canceled += _ => MoveInput = Vector2.zero;
-        controls.Gameplay.ToggleCamera.performed += _ =>
-        {
-            if (Time.unscaledTime - lastToggleCameraTime < ToggleCameraCooldown)
-                return;
-
-            lastToggleCameraTime = Time.unscaledTime;
-            ToggleCameraPressed = true;
-        };
         controls.Gameplay.Look.performed += ctx =>
         {
             LookInput = ctx.ReadValue<Vector2>();
@@ -62,12 +54,16 @@ public class PlayerInputReader : MonoBehaviour
 
         controls.Gameplay.SwitchWeapon.performed += _ => SwitchWeaponPressed = true;
         controls.Gameplay.Interact.performed += _ => InteractPressed = true;
+
+        /*
         controls.Gameplay.ToggleCamera.performed += _ =>
         {
             if (Time.unscaledTime - lastToggleCameraTime < ToggleCameraCooldown) return;
             lastToggleCameraTime = Time.unscaledTime;
             ToggleCameraCount++;
-        };
+        }
+        */
+
 
 
     }

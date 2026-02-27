@@ -7,7 +7,7 @@ public class PlayerInputManager : MonoBehaviour
     [SerializeField] private PlayerInputReader inputReader;
     [SerializeField] private PlayerController playerController;
     [SerializeField] private WeaponSystem weaponSystem;
-    [SerializeField] private CameraController cameraController;
+    //[SerializeField] private CameraController cameraController;
     [SerializeField] private PlayerAimController aimController;
     private int lastToggleCount;
     void Update()
@@ -18,15 +18,17 @@ public class PlayerInputManager : MonoBehaviour
 
         playerController.ResetJumpIfGrounded();
         playerController.Move(inputReader.MoveInput, inputReader.SprintHeld);
-        playerController.Rotate(inputReader.LookInput, true);
+        playerController.Rotate(inputReader.LookInput, inputReader.IsLookFromGamepad);
 
         if (inputReader.JumpPressed)
             playerController.Jump();
 
+        /*
         if (inputReader.ToggleCameraPressed)
         {
             cameraController.ToggleMode();
         }
+        */
 
 
         if (weaponSystem == null) return;

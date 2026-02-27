@@ -194,7 +194,7 @@ public class PlayerController : MonoBehaviour
         Quaternion targetPitch = Quaternion.Euler(mouseY, 0f, 0f);
         Quaternion targetYaw = Quaternion.Euler(0f, mouseX, 0f);
 
-        float smooth = 20f;
+        float smooth = 10f;
         cameraHolder.localRotation = Quaternion.Slerp(cameraHolder.localRotation, targetPitch, Time.deltaTime * smooth);
         transform.rotation = Quaternion.Slerp(transform.rotation, targetYaw, Time.deltaTime * smooth);
     }

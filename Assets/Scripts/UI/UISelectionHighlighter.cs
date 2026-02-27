@@ -12,11 +12,15 @@ public class UISelectionHighlighter : MonoBehaviour
     [SerializeField] private bool hideWhenNoSelection = true;
 
     [Header("Mode")]
-    [Tooltip("If true, UI open state is detected automatically (no PauseManager needed).")]
+    [Tooltip("UI open state is detected automatically")]
     [SerializeField] private bool autoDetectUIOpen = true;
 
-    [Tooltip("If autoDetectUIOpen is true, frame only shows when something is selected.")]
+    [Tooltip("frame only shows when something is selected.")]
     [SerializeField] private bool requireSelectionToShow = true;
+
+    [Header("UI Context (Recommended)")]
+    [Tooltip("If true, the frame will only show when UIContext says UI is active (menus opened).")]
+    [SerializeField] private bool requireUIContext = true;
 
     [Header("Input Rules")]
     [SerializeField] private bool onlyForGamepad = true;
@@ -52,6 +56,13 @@ public class UISelectionHighlighter : MonoBehaviour
     {
         if (frame != null)
             frame.gameObject.SetActive(false);
+
+        // If the project starts in a scene without UIContext, create it.
+        if (requireUIContext && UIContext.Instance == null)
+        {
+            var go = new GameObject("UIContext");
+            go.AddComponent<UIContext>();
+        }
     }
 
     private void Update()
@@ -67,6 +78,13 @@ public class UISelectionHighlighter : MonoBehaviour
 
         // No EventSystem -> no UI navigation -> hide
         if (EventSystem.current == null)
+        {
+            frame.gameObject.SetActive(false);
+            return;
+        }
+
+        // NEW: Block in gameplay unless UI is actually active
+        if (requireUIContext && UIContext.Instance != null && !UIContext.Instance.IsUIActive)
         {
             frame.gameObject.SetActive(false);
             return;
@@ -116,7 +134,6 @@ public class UISelectionHighlighter : MonoBehaviour
         if (requireSelectionToShow)
             return EventSystem.current.currentSelectedGameObject != null;
 
-        // Alternative: if you want it "open" whenever an EventSystem exists
         return true;
     }
 
