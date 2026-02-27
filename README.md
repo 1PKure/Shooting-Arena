@@ -1,7 +1,7 @@
-# Switch Protocol — Arena Shooter 3D (Unity)
+# Switch Protocol — Shooter Arena (Unity)
 
 **Autor:** Matias Pulido  
-**Motor:** Unity 2022.3.15f1  
+**Motor:** Unity 2022.3.63f3  
 **Plataforma:** Windows (Release en GitHub) + Página en Itch.io
 
 ---
