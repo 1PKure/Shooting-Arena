@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEngine;
 
 public class SettingsManager : MonoBehaviour
@@ -8,6 +9,10 @@ public class SettingsManager : MonoBehaviour
     private const string PrefFullscreen = "Settings_Fullscreen";
     private const string PrefFps = "Settings_FpsLimit";
     private const string PrefVsync = "Settings_Vsync";
+    private const string PrefMouseSens = "Settings_MouseSensitivity";
+    private const string PrefGamepadSens = "Settings_GamepadSensitivity";
+
+    [SerializeField] private PlayerData playerData;
 
     public Resolution[] AvailableResolutions { get; private set; }
 
@@ -18,6 +23,7 @@ public class SettingsManager : MonoBehaviour
             Instance = this;
             DontDestroyOnLoad(gameObject);
             AvailableResolutions = Screen.resolutions;
+            RefreshAvailableResolutions();
             ApplySavedSettings();
         }
         else
@@ -25,17 +31,34 @@ public class SettingsManager : MonoBehaviour
             Destroy(gameObject);
         }
     }
-
+    private void RefreshAvailableResolutions()
+    {
+        AvailableResolutions = Screen.resolutions
+            .GroupBy(r => (r.width, r.height))
+            .Select(g => g.OrderByDescending(x => x.refreshRateRatio.value).First())
+            .OrderBy(r => r.width)
+            .ThenBy(r => r.height)
+            .ToArray();
+    }
     public void ApplySavedSettings()
     {
+        if (AvailableResolutions == null || AvailableResolutions.Length == 0)
+            RefreshAvailableResolutions();
+
         int resIndex = PlayerPrefs.GetInt(PrefResIndex, GetDefaultResolutionIndex());
         bool fullscreen = PlayerPrefs.GetInt(PrefFullscreen, 1) == 1;
         int fpsLimit = PlayerPrefs.GetInt(PrefFps, 60);
         int vsync = PlayerPrefs.GetInt(PrefVsync, 0);
 
+        resIndex = Mathf.Clamp(resIndex, 0, AvailableResolutions.Length - 1);
+
         ApplyResolution(resIndex, fullscreen);
         ApplyVSync(vsync);
         ApplyFpsLimit(fpsLimit);
+        ApplySensitivity(
+        GetSavedMouseSensitivity(),
+        GetSavedGamepadSensitivity()
+        );
     }
 
     public int GetSavedResolutionIndex() => PlayerPrefs.GetInt(PrefResIndex, GetDefaultResolutionIndex());
@@ -76,14 +99,54 @@ public class SettingsManager : MonoBehaviour
 
     private int GetDefaultResolutionIndex()
     {
-        Resolution current = Screen.currentResolution;
-        Resolution[] res = Screen.resolutions;
+        int w = Screen.width;
+        int h = Screen.height;
 
-        for (int i = 0; i < res.Length; i++)
+        for (int i = 0; i < AvailableResolutions.Length; i++)
         {
-            if (res[i].width == current.width && res[i].height == current.height)
+            if (AvailableResolutions[i].width == w && AvailableResolutions[i].height == h)
                 return i;
         }
-        return Mathf.Max(0, res.Length - 1);
+        int bestIndex = 0;
+        int bestDiff = int.MaxValue;
+        int targetArea = w * h;
+
+        for (int i = 0; i < AvailableResolutions.Length; i++)
+        {
+            int area = AvailableResolutions[i].width * AvailableResolutions[i].height;
+            int diff = Mathf.Abs(area - targetArea);
+            if (diff < bestDiff)
+            {
+                bestDiff = diff;
+                bestIndex = i;
+            }
+        }
+
+        return bestIndex;
+    }
+
+    public float GetSavedMouseSensitivity()
+    {
+        if (playerData == null) return PlayerPrefs.GetFloat(PrefMouseSens, 1f);
+        return PlayerPrefs.GetFloat(PrefMouseSens, playerData.mouseSensitivity);
+    }
+
+    public float GetSavedGamepadSensitivity()
+    {
+        if (playerData == null) return PlayerPrefs.GetFloat(PrefGamepadSens, 180f);
+        return PlayerPrefs.GetFloat(PrefGamepadSens, playerData.gamepadLookSensitivity);
+    }
+
+    public void ApplySensitivity(float mouseSens, float gamepadSens)
+    {
+        if (playerData != null)
+        {
+            playerData.mouseSensitivity = mouseSens;
+            playerData.gamepadLookSensitivity = gamepadSens;
+        }
+
+        PlayerPrefs.SetFloat(PrefMouseSens, mouseSens);
+        PlayerPrefs.SetFloat(PrefGamepadSens, gamepadSens);
+        PlayerPrefs.Save();
     }
 }

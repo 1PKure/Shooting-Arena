@@ -96,7 +96,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4757033006359287869
 Transform:
   m_ObjectHideFlags: 0
@@ -105,7 +105,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 834926296667693322}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.042000875, y: -0.0074254745, z: -0.00031216035, w: -0.99909}
+  m_LocalRotation: {x: 0.04200066, y: -0.0074254745, z: -0.00031215866, w: -0.99909}
   m_LocalPosition: {x: -0.048000008, y: 0.08099997, z: -2.0550008}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -229,7 +229,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &7669805310619376220
 Transform:
   m_ObjectHideFlags: 0
@@ -394,8 +394,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2650130548837086691}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.042000886, y: -0.0074254745, z: -0.00031216044, w: -0.99909}
-  m_LocalPosition: {x: -0.048000336, y: 0.081000805, z: -2.0549939}
+  m_LocalRotation: {x: 0.08887789, y: 0.0000000016713781, z: -2.8974953e-10, w: -0.99604255}
+  m_LocalPosition: {x: -0.0000000018626451, y: 0.37800002, z: 0.66}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -434,7 +434,7 @@ Camera:
     height: 1
   near clip plane: 0.1
   far clip plane: 5000
-  field of view: 60.000004
+  field of view: 75
   orthographic: 0
   orthographic size: 10
   m_Depth: -1
@@ -473,7 +473,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   firstPersonVcam: {fileID: 5135005518955139439}
-  thirdPersonVcam: {fileID: 8754161174404948960}
   activePriority: 20
   inactivePriority: 10
   startFirstPerson: 1
@@ -640,8 +639,8 @@ MonoBehaviour:
   normalJumpHeight: 2
   godJumpHeight: 5
   godSpeedMultiplier: 2
-  firstPersonMinPitch: -50
-  firstPersonMaxPitch: 50
+  firstPersonMinPitch: -75
+  firstPersonMaxPitch: 75
   thirdPersonMinPitch: -20
   thirdPersonMaxPitch: 45
   thirdPersonSensitivityMultiplier: 0.2
@@ -687,8 +686,8 @@ MonoBehaviour:
   weapons:
   - name: Rifle
     model: {fileID: 4662108993736336128}
-    damage: 35
-    fireRate: 2
+    damage: 30
+    fireRate: 3
     maxAmmo: 30
     currentAmmo: 30
     isAutomatic: 1
@@ -801,7 +800,7 @@ MonoBehaviour:
   player: {fileID: 3432807175270667542}
   fillImage: {fileID: 0}
   smooth: 1
-  smoothSpeed: 12
+  smoothSpeed: 14
 --- !u!114 &380096194987918487
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -815,7 +814,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Actions: {fileID: -944628639613478452, guid: a1b0f8a024c88414e8910a8e22ae8e21, type: 3}
-  m_NotificationBehavior: 0
+  m_NotificationBehavior: 2
   m_UIInputModule: {fileID: 0}
   m_DeviceLostEvent:
     m_PersistentCalls:
@@ -888,7 +887,7 @@ Transform:
   m_GameObject: {fileID: 7807782505243666878}
   serializedVersion: 2
   m_LocalRotation: {x: 0.27447355, y: -0.40059233, z: 0.68478024, w: -0.543384}
-  m_LocalPosition: {x: 0.019, y: 0.232, z: 0.099}
+  m_LocalPosition: {x: 0.229, y: 0.435, z: 0.28}
   m_LocalScale: {x: 1.2500001, y: 1.2499998, z: 1.2499995}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1231,15 +1230,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4792254929554238, guid: 04e8ca980b4beed48979d827d8250fb4, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 0.162
       objectReference: {fileID: 0}
     - target: {fileID: 4792254929554238, guid: 04e8ca980b4beed48979d827d8250fb4, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 0.164
       objectReference: {fileID: 0}
     - target: {fileID: 4792254929554238, guid: 04e8ca980b4beed48979d827d8250fb4, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.3
+      value: 0.021
       objectReference: {fileID: 0}
     - target: {fileID: 4792254929554238, guid: 04e8ca980b4beed48979d827d8250fb4, type: 3}
       propertyPath: m_LocalRotation.w

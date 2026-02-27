@@ -179,8 +179,19 @@ public class PlayerController : MonoBehaviour
             if (!isFirstPerson) sens *= thirdPersonSensitivityMultiplier;
         }
 
-        float x = lookInput.x * sens * Time.deltaTime;
-        float y = lookInput.y * sens * Time.deltaTime;
+        float x, y;
+
+        if (isGamepadLook)
+        {
+            x = lookInput.x * sens * Time.unscaledDeltaTime;
+            y = lookInput.y * sens * Time.unscaledDeltaTime;
+        }
+        else
+        {
+            x = lookInput.x * sens;
+            y = lookInput.y * sens;
+            if (!isFirstPerson) x *= thirdPersonSensitivityMultiplier;
+        }
 
         mouseX += x;
         mouseY -= y;

@@ -5,7 +5,7 @@ public class CameraController : MonoBehaviour
 {
     [Header("Virtual Cameras")]
     [SerializeField] private CinemachineVirtualCamera firstPersonVcam;
-    [SerializeField] private CinemachineVirtualCamera thirdPersonVcam;
+    //[SerializeField] private CinemachineVirtualCamera thirdPersonVcam;
 
     [Header("Priorities")]
     [SerializeField] private int activePriority = 20;
@@ -44,21 +44,23 @@ public class CameraController : MonoBehaviour
 
     private void ApplyMode()
     {
+        /*
         if (firstPersonVcam == null || thirdPersonVcam == null)
         {
             Debug.LogError("CameraController: Virtual Cameras are not assigned.");
             return;
         }
+        */
 
         if (_isFirstPerson)
         {
             firstPersonVcam.Priority = activePriority;
-            thirdPersonVcam.Priority = inactivePriority;
+            //thirdPersonVcam.Priority = inactivePriority;
         }
         else
         {
-            firstPersonVcam.Priority = inactivePriority;
-            thirdPersonVcam.Priority = activePriority;
+            //firstPersonVcam.Priority = inactivePriority;
+            //thirdPersonVcam.Priority = activePriority;
         }
 
         if (player != null)

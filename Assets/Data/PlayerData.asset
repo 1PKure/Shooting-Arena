@@ -15,8 +15,8 @@ MonoBehaviour:
   maxHealth: 100
   moveSpeed: 6
   baseSpeed: 6
-  mouseSensitivity: 5
-  gamepadLookSensitivity: 200
+  mouseSensitivity: 0.5
+  gamepadLookSensitivity: 180
   sprintMultiplier: 1.6
   maxStamina: 5
   staminaDrainPerSecond: 1

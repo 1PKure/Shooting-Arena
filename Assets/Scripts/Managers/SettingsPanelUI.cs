@@ -11,6 +11,10 @@ public class SettingsPanelUI : MonoBehaviour
     [SerializeField] private TMP_Dropdown fpsDropdown;
     [SerializeField] private TMP_Dropdown vsyncDropdown;
 
+    [Header("Sensitivity")]
+    [SerializeField] private Slider mouseSensitivitySlider;
+    [SerializeField] private Slider gamepadSensitivitySlider;
+
     private readonly int[] fpsOptions = { 30, 60, 120, 144, 240, 0 };
 
     private void OnEnable()
@@ -36,6 +40,9 @@ public class SettingsPanelUI : MonoBehaviour
 
         vsyncDropdown.value = Mathf.Clamp(SettingsManager.Instance.GetSavedVSync(), 0, 2);
         vsyncDropdown.RefreshShownValue();
+
+        mouseSensitivitySlider.SetValueWithoutNotify(SettingsManager.Instance.GetSavedMouseSensitivity());
+        gamepadSensitivitySlider.SetValueWithoutNotify(SettingsManager.Instance.GetSavedGamepadSensitivity());
     }
 
     private void PopulateResolutionDropdown()
@@ -82,7 +89,10 @@ public class SettingsPanelUI : MonoBehaviour
         SettingsManager.Instance.ApplyResolution(resIndex, fullscreen);
         SettingsManager.Instance.ApplyVSync(vsync);
         SettingsManager.Instance.ApplyFpsLimit(fpsLimit);
-
+        SettingsManager.Instance.ApplySensitivity(
+        mouseSensitivitySlider.value,
+        gamepadSensitivitySlider.value
+        );
         UIManager.Instance?.ShowMessage("Settings applied");
     }
 

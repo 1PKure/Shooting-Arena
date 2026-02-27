@@ -258,7 +258,7 @@ public class WeaponSystem : MonoBehaviour
             Instantiate(w.muzzleVFXPrefab, w.firePoint.position, w.firePoint.rotation);
 
         FeedbackManager.Instance.PlayShootFeedback(w.shootSFX);
-        Destroy(projectileGO, 3f);
+        Destroy(projectileGO, 1.5f);
     }
     public void ResetWeapons()
     {
