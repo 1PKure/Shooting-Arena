@@ -11547,7 +11547,7 @@ MonoBehaviour:
   fpsDropdown: {fileID: 1858534075}
   vsyncDropdown: {fileID: 1097722043}
   mouseSensitivitySlider: {fileID: 1283459885}
-  gamepadSensitivitySlider: {fileID: 0}
+  gamepadSensitivitySlider: {fileID: 1237456691}
 --- !u!114 &1417334514
 MonoBehaviour:
   m_ObjectHideFlags: 0
