@@ -2,7 +2,7 @@
 
 **Autor:** Matias Pulido  
 **Motor:** Unity 2022.3.63f3  
-**Plataforma:** Windows (Release en GitHub) + Página en Itch.io
+**Plataforma:** Windows
 
 ---
 
