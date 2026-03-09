@@ -25,11 +25,14 @@ public class GameManager : MonoBehaviour
 
     [Header("Game Rules")]
     [SerializeField] private float gameTime = 300f;
-    [SerializeField] private int easyTargetScore = 200;
-    [SerializeField] private int mediumTargetScore = 350;
-    [SerializeField] private int hardTargetScore = 500;
 
+    [SerializeField] private int easyTargetKills = 25;
+    [SerializeField] private int mediumTargetKills = 40;
+    [SerializeField] private int hardTargetKills = 60;
+    private int killCount;
+    private int targetKills;
     [SerializeField] private CrosshairUI crosshair;
+
     private float remainingTime;
     private int score;
     private int targetScore;
@@ -64,6 +67,7 @@ public class GameManager : MonoBehaviour
         isGameOver = false;
         victoryTriggered = false;
         remainingTime = gameTime;
+        killCount = 0;
         score = 0;
         isTutorialLevel = SceneManager.GetActiveScene().name == "Training";
         int storedDiff = PlayerPrefs.GetInt("SelectedDifficulty", 1);
@@ -140,26 +144,47 @@ public class GameManager : MonoBehaviour
 
         switch (currentDifficulty)
         {
-            case Difficulty.Easy: targetScore = easyTargetScore; break;
-            case Difficulty.Medium: targetScore = mediumTargetScore; break;
-            case Difficulty.Hard: targetScore = hardTargetScore; break;
+            case Difficulty.Easy:
+                targetKills = easyTargetKills;
+                break;
+
+            case Difficulty.Medium:
+                targetKills = mediumTargetKills;
+                break;
+
+            case Difficulty.Hard:
+                targetKills = hardTargetKills;
+                break;
         }
     }
 
-
-    public void AddScore(int points)
+    public void RegisterKill(int rewardScore = 0)
     {
-        if (isGameOver) return;
+        if (isGameOver)
+            return;
 
-        score += points;
+        killCount++;
+
+        if (rewardScore > 0)
+            score += rewardScore;
+
         UpdateScoreUI();
 
         var events = Code.Service.ServiceProvider.Instance
             .GetService<Systems.CentralizeEventSystem.CentralizeEventSystem>();
-        events?.Get<GameEvents.ScoreChanged>()?.Invoke(score);
 
-        if (!isTutorialLevel && score >= targetScore)
+        events?.Get<GameEvents.ScoreChanged>()?.Invoke(killCount);
+
+        if (!isTutorialLevel && killCount >= targetKills)
             Victory();
+    }
+    public void AddScore(int points)
+    {
+        if (isGameOver || points <= 0)
+            return;
+
+        score += points;
+        UpdateScoreUI();
     }
 
     public void GameOver()
@@ -204,7 +229,10 @@ public class GameManager : MonoBehaviour
     {
         if (scoreText != null)
         {
-            scoreText.text = "Score: " + score.ToString();
+            if (isTutorialLevel)
+                scoreText.text = $"Kills: {killCount}";
+            else
+                scoreText.text = $"Kills: {killCount}/{targetKills} Score: {score}";
         }
     }
 
@@ -239,8 +267,9 @@ public class GameManager : MonoBehaviour
     {
         isGameOver = false;
         victoryTriggered = false;          
-        tutorialReadyToAdvance = false;    
+        tutorialReadyToAdvance = false;
 
+        killCount = 0;
         score = 0;
         remainingTime = gameTime;
         Time.timeScale = 1f;

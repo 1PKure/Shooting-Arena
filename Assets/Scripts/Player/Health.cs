@@ -84,7 +84,7 @@ public class Health : MonoBehaviour, IDamageable
         }
 
         FeedbackManager.Instance.PlayDeathFeedback(transform.position);
-        GameManager.Instance.AddScore(scoreOnDeath);
+        GameManager.Instance.RegisterKill(scoreOnDeath);
 
         Destroy(transform.root.gameObject);
     }

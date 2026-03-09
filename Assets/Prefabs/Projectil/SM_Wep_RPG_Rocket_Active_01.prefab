@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 23517954995083224}
   - component: {fileID: 64874043923024458}
   - component: {fileID: -4294833555178494824}
+  - component: {fileID: -6862618315651834562}
   m_Layer: 10
   m_Name: SM_Wep_RPG_Rocket_Active_01
   m_TagString: Bullet
@@ -134,3 +135,24 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 0
+--- !u!114 &-6862618315651834562
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1634727942366104}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 83d33ad24f19b1f4dbbe397a3e872b4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  explosionRadius: 3
+  explosionDamage: 75
+  damageableMask:
+    serializedVersion: 2
+    m_Bits: 4224
+  collisionMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  explosionEffect: {fileID: 1804206099813350, guid: 5ed0a013702bd9f42847584f2fba7b21, type: 3}

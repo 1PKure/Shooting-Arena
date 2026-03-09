@@ -20,6 +20,15 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField] private float rayDown = 20f;
     [SerializeField] private float epsilon = 0.02f;
 
+    [Header("Difficulty")]
+    [SerializeField] private int easyMaxEnemies = 4;
+    [SerializeField] private int mediumMaxEnemies = 6;
+    [SerializeField] private int hardMaxEnemies = 8;
+
+    [SerializeField] private float easySpawnInterval = 1.4f;
+    [SerializeField] private float mediumSpawnInterval = 1.0f;
+    [SerializeField] private float hardSpawnInterval = 0.7f;
+
     private List<GameObject> activeEnemies = new List<GameObject>();
     private float nextSpawnTime = 0f;
     private Difficulty currentDifficulty;
@@ -88,7 +97,28 @@ public class EnemySpawner : MonoBehaviour
 
         return null;
     }
-    public void SetDifficulty(Difficulty difficulty) => currentDifficulty = difficulty;
+    public void SetDifficulty(Difficulty difficulty)
+    {
+        currentDifficulty = difficulty;
+
+        switch (currentDifficulty)
+        {
+            case Difficulty.Easy:
+                maxEnemies = easyMaxEnemies;
+                spawnInterval = easySpawnInterval;
+                break;
+
+            case Difficulty.Medium:
+                maxEnemies = mediumMaxEnemies;
+                spawnInterval = mediumSpawnInterval;
+                break;
+
+            case Difficulty.Hard:
+                maxEnemies = hardMaxEnemies;
+                spawnInterval = hardSpawnInterval;
+                break;
+        }
+    }
 
     public void ResetSpawner()
     {
@@ -96,8 +126,10 @@ public class EnemySpawner : MonoBehaviour
             Destroy(enemy);
 
         activeEnemies.Clear();
-        nextSpawnTime = Time.time + spawnInterval;
         allowSpawn = true;
+
+        SetDifficulty(currentDifficulty);
+        nextSpawnTime = Time.time + spawnInterval;
     }
 
 

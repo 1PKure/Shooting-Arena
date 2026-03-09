@@ -128,7 +128,7 @@ MonoBehaviour:
   damage: 30
   enemyLayer:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 4224
   speed: 60
 --- !u!135 &870892036017980729
 SphereCollider:

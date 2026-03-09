@@ -32,6 +32,9 @@ public class WeaponSystem : MonoBehaviour
         public int explosionDamage = 120;
         public bool explosionFalloff = true;
         public GameObject explosionVFXPrefab;
+        [Header("Projectile")]
+        public float projectileLifetime = 4f;
+        public LayerMask projectileCollisionMask = ~0;
     }
 
 
@@ -42,6 +45,8 @@ public class WeaponSystem : MonoBehaviour
     [SerializeField] private LayerMask enemyLayer;
     [SerializeField] private Collider ownerCollider;
     [SerializeField] private PlayerInputReader inputReader;
+
+
 
     private float nextTimeToFire = 0f;
 
@@ -221,15 +226,19 @@ public class WeaponSystem : MonoBehaviour
     }
 
 
-    void ShootProjectile()
+    private void ShootProjectile()
     {
         var w = weapons[currentWeaponIndex];
+
+        if (w.projectilePrefab == null || w.firePoint == null)
+            return;
 
         Ray ray = GetAimRay();
 
         Vector3 aimPoint = ray.origin + ray.direction * w.range;
         if (Physics.Raycast(ray, out RaycastHit hit, w.range, ~0, QueryTriggerInteraction.Ignore))
             aimPoint = hit.point;
+
         if (ownerCollider != null && hit.collider == ownerCollider)
             return;
 
@@ -247,6 +256,14 @@ public class WeaponSystem : MonoBehaviour
             projectile.SetFeedbackOverrides(null, null, w.hitVFXPrefab, w.missVFXPrefab);
         }
 
+        ExplosionDamage explosion = projectileGO.GetComponent<ExplosionDamage>();
+        if (explosion != null)
+        {
+            explosion.SetDamage(w.explosionDamage > 0 ? w.explosionDamage : w.damage);
+            explosion.SetRadius(w.explosionRadius);
+            explosion.SetMasks(enemyLayer, w.projectileCollisionMask);
+        }
+
         Rigidbody rb = projectileGO.GetComponent<Rigidbody>();
         if (rb != null)
         {
@@ -258,7 +275,7 @@ public class WeaponSystem : MonoBehaviour
             Instantiate(w.muzzleVFXPrefab, w.firePoint.position, w.firePoint.rotation);
 
         FeedbackManager.Instance.PlayShootFeedback(w.shootSFX);
-        Destroy(projectileGO, 2f);
+        Destroy(projectileGO, w.projectileLifetime);
     }
     public void ResetWeapons()
     {

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Code.Service;
 using Systems.CentralizeEventSystem;
+using static GameEvents;
 
 public class AchievementsManager : MonoBehaviour
 {
@@ -34,7 +35,7 @@ public class AchievementsManager : MonoBehaviour
         else
             Debug.LogWarning("[AchievementsManager] Popup UI reference is NULL. No popup will be shown.");
 
-        _events.AddListener<GameEvents.ScoreChanged>(OnScoreChanged);
+        _events.AddListener<GameEvents.KillChanged>(OnKillChanged);
         _events.AddListener<GameEvents.Victory>(OnVictory);
         _events.AddListener<GameEvents.GameLoaded>(OnGameLoaded);
         Debug.Log("[AchievementsManager] Service type: " + _service.GetType().FullName);
@@ -72,7 +73,7 @@ public class AchievementsManager : MonoBehaviour
     {
         if (_events != null)
         {
-            _events.RemoveListener<GameEvents.ScoreChanged>(OnScoreChanged);
+            _events.RemoveListener<GameEvents.KillChanged>(OnKillChanged);
             _events.RemoveListener<GameEvents.Victory>(OnVictory);
             _events.RemoveListener<GameEvents.GameLoaded>(OnGameLoaded);
         }
@@ -81,7 +82,7 @@ public class AchievementsManager : MonoBehaviour
             _service.OnAchievementUnlocked -= OnUnlocked;
     }
 
-    private void OnScoreChanged(int newScore)
+    private void OnKillChanged(int newKillCount)
     {
         RegisterPentakillKill();
         _service.AddProgress("kill_50", 1);
